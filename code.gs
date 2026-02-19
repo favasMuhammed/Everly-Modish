@@ -6,7 +6,7 @@
 const CONFIG = {
   salesSheet: 'Sales',
   invSheet: 'Inventory',
-  salesHeaders: ['Date', 'Customer Name', 'SKU Sold', 'Qty', 'Total Amt'],
+  salesHeaders: ['Date', 'Customer Name', 'Phone', 'Address', 'SKU Sold', 'Qty', 'Total Amt'],
   invHeaders: ['SKU', 'Item Name', 'Size', 'Price', 'Initial Stock'],
   timezone: "GMT+5:30" 
 };
@@ -47,6 +47,8 @@ function doPost(e) {
       const newRow = [
         Utilities.formatDate(new Date(), CONFIG.timezone, "yyyy-MM-dd HH:mm:ss"),
         e.parameter['Customer Name'] || "",
+        e.parameter['Phone'] || "",
+        e.parameter['Address'] || "",
         e.parameter['SKU Sold'] || "",
         e.parameter['Qty'] || "",
         e.parameter['Total Amt'] || ""
@@ -64,6 +66,18 @@ function doPost(e) {
         e.parameter['Initial Stock'] || ""
       ];
       sheet.appendRow(newRow);
+      return responseJSON({ result: 'success' });
+
+    } else if (action === 'delete_sale') {
+      const sheet = doc.getSheetByName(CONFIG.salesSheet);
+      const row = parseInt(e.parameter.row);
+      if (row > 1) sheet.deleteRow(row); // Prevent deleting header
+      return responseJSON({ result: 'success' });
+
+    } else if (action === 'delete_inventory') {
+      const sheet = doc.getSheetByName(CONFIG.invSheet);
+      const row = parseInt(e.parameter.row);
+      if (row > 1) sheet.deleteRow(row); // Prevent deleting header
       return responseJSON({ result: 'success' });
     }
 

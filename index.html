@@ -184,9 +184,23 @@
                                     class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-4">
                                     <div class="space-y-1">
                                         <label class="text-xs font-semibold text-slate-500 uppercase">Customer</label>
-                                        <input name="Customer Name" type="text" placeholder="John Doe"
-                                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                        <input name="Customer Name" type="text" placeholder="Customer Name"
+                                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                                             required>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="space-y-1">
+                                            <label class="text-xs font-semibold text-slate-500 uppercase">Phone</label>
+                                            <input name="Phone" type="tel" placeholder="98765..."
+                                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label
+                                                class="text-xs font-semibold text-slate-500 uppercase">Address</label>
+                                            <input name="Address" type="text" placeholder="City"
+                                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        </div>
                                     </div>
 
                                     <div class="space-y-1 relative">
@@ -242,9 +256,11 @@
                                         <tr>
                                             <th class="px-6 py-3">Time</th>
                                             <th class="px-6 py-3">Customer</th>
+                                            <th class="px-6 py-3">Details</th>
                                             <th class="px-6 py-3">SKU</th>
                                             <th class="px-6 py-3 text-center">Qty</th>
                                             <th class="px-6 py-3 text-right">Amount</th>
+                                            <th class="px-6 py-3 text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="salesTableBody" class="divide-y divide-slate-100 text-sm">
@@ -268,10 +284,23 @@
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
                             <h2 class="text-xl font-bold text-slate-800 mb-6">Add New Product</h2>
                             <form id="invForm" class="space-y-4">
-                                <div>
-                                    <input name="SKU" type="text" placeholder="SKU (e.g. EM-HOODIE-M)"
-                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none uppercase font-mono focus:border-indigo-500"
-                                        required>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <select id="prodType"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
+                                        onchange="generateSku()">
+                                        <option value="" disabled selected>Select Type</option>
+                                        <option value="ABA">Abaya</option>
+                                        <option value="GWN">Gown</option>
+                                        <option value="CRD">Cord Set</option>
+                                        <option value="DNM">Denim</option>
+                                        <option value="CHR">Churidar</option>
+                                        <option value="SHL">Shawl</option>
+                                        <option value="KFT">Kaftans</option>
+                                        <option value="JMP">Modest Jumpsuits</option>
+                                    </select>
+                                    <input name="SKU" id="genSku" type="text" placeholder="Auto-SKU"
+                                        class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-lg outline-none uppercase font-mono text-slate-500 cursor-not-allowed"
+                                        readonly required>
                                 </div>
                                 <div>
                                     <input name="Item Name" type="text" placeholder="Product Name"
@@ -315,6 +344,7 @@
                                             <th class="px-6 py-3">Name</th>
                                             <th class="px-6 py-3">Details</th>
                                             <th class="px-6 py-3 text-center">Initial</th>
+                                            <th class="px-6 py-3 text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="invTableBody" class="divide-y divide-slate-100 text-sm">
@@ -447,9 +477,9 @@
             let totalItemsSold = 0;
 
             state.sales.forEach(row => {
-                const sku = row[2];
-                const qty = parseInt(row[3]) || 0;
-                const amt = parseFloat(row[4]) || 0;
+                const sku = row[4]; // Updated Index
+                const qty = parseInt(row[5]) || 0; // Updated Index
+                const amt = parseFloat(row[6]) || 0; // Updated Index
 
                 totalRevenue += amt;
                 totalItemsSold += qty;
@@ -513,21 +543,33 @@
 
             const recent = state.sales.slice(-10).reverse();
             if (recent.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No sales recorded yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">No sales recorded yet.</td></tr>';
                 return;
             }
 
-            recent.forEach(row => {
+            recent.forEach((row, i) => {
                 const date = row[0] ? new Date(row[0]).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '-';
-                const amt = parseFloat(row[4]) || 0;
+                const amt = parseFloat(row[6]) || 0; // Updated Index
+                const rowIndex = state.sales.length - i + 1; // 1-based index (header=1, so data starts at 2)
 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-3 text-slate-500">${date}</td>
-                        <td class="px-6 py-3 font-medium">${row[1]}</td>
-                        <td class="px-6 py-3 font-mono text-xs bg-slate-50 rounded w-fit">${row[2]}</td>
-                        <td class="px-6 py-3 text-center">${row[3]}</td>
+                        <td class="px-6 py-3 font-medium">
+                            <div class="text-slate-800">${row[1]}</div>
+                        </td>
+                        <td class="px-6 py-3 text-xs text-slate-500">
+                            <div>${row[2] || '-'}</div>
+                            <div>${row[3] || '-'}</div>
+                        </td>
+                        <td class="px-6 py-3 font-mono text-xs bg-slate-50 rounded w-fit">${row[4]}</td>
+                        <td class="px-6 py-3 text-center">${row[5]}</td>
                         <td class="px-6 py-3 text-right font-bold text-slate-700">₹${amt.toFixed(2)}</td>
+                        <td class="px-6 py-3 text-center">
+                            <button onclick="handleDelete('sale', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Sale">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </td>
                     </tr>
                 `);
             });
@@ -538,24 +580,76 @@
             tbody.innerHTML = '';
 
             if (state.inventory.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">Catalog is empty.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">Catalog is empty.</td></tr>';
                 return;
             }
 
-            state.inventory.forEach(row => {
+            state.inventory.forEach((row, i) => {
                 const price = parseFloat(row[3]) || 0;
+                const rowIndex = i + 2; // 1-based index (header=1)
+
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-3 font-mono text-xs font-semibold text-indigo-600">${row[0]}</td>
                         <td class="px-6 py-3 font-medium">${row[1]}</td>
                         <td class="px-6 py-3 text-slate-500 text-xs">${row[2]} | ₹${price}</td>
                         <td class="px-6 py-3 text-center font-mono bg-slate-50">${row[4]}</td>
+                        <td class="px-6 py-3 text-center">
+                            <button onclick="handleDelete('inventory', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Item">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </td>
                     </tr>
                 `);
             });
         }
 
         // --- INTERACTION ---
+        function handleDelete(type, rowIndex) {
+            if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) return;
+
+            const action = type === 'sale' ? 'delete_sale' : 'delete_inventory';
+            showToast('Deleting record...', 'info');
+
+            const formData = new FormData();
+            formData.append('action', action);
+            formData.append('row', rowIndex);
+
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        showToast('Record deleted', 'success');
+                        loadData(true);
+                    } else throw new Error(data.error);
+                })
+                .catch(err => {
+                    showToast('Error: ' + err.message, 'error');
+                });
+        }
+
+        function generateSku() {
+            const type = document.getElementById('prodType').value;
+            if (!type) return;
+
+            const prefix = `EM-${type}-`;
+            let maxNum = 0;
+
+            state.inventory.forEach(row => {
+                const sku = row[0];
+                if (sku && sku.startsWith(prefix)) {
+                    const parts = sku.split('-');
+                    if (parts.length === 3) {
+                        const num = parseInt(parts[2]);
+                        if (!isNaN(num) && num > maxNum) maxNum = num;
+                    }
+                }
+            });
+
+            const nextNum = String(maxNum + 1).padStart(3, '0');
+            document.getElementById('genSku').value = `${prefix}${nextNum}`;
+        }
+
         function handleSkuSearch(query) {
             const dropdown = document.getElementById('skuDropdown');
             if (!query) {
