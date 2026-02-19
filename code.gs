@@ -1,14 +1,17 @@
 /**
- * EVERLY MODISH MASTER API
- * Manages Sales, Inventory, and Dashboard Analytics
+ * EVERLY MODISH MASTER API (PHASE 2)
+ * Manages Sales, Inventory, Expenses, and Financial Analytics
  */
 
 const CONFIG = {
   salesSheet: 'Sales',
   invSheet: 'Inventory',
-  salesHeaders: ['Date', 'Customer Name', 'Phone', 'Address', 'SKU Sold', 'Qty', 'Total Amt'],
-  invHeaders: ['SKU', 'Item Name', 'Size', 'Price', 'Initial Stock'],
-  timezone: "GMT+5:30" 
+  expSheet: 'Expenses',
+  // Updated Schema
+  salesHeaders: ['Date', 'Customer Name', 'Phone', 'Address', 'SKU', 'Qty', 'Retail Price', 'Shipping Charge', 'Total Paid'],
+  invHeaders: ['SKU', 'Item Name', 'Category', 'Size', 'Cost Price', 'Retail Price', 'Initial Stock'],
+  expHeaders: ['Date', 'Category', 'Amount', 'Notes'],
+  timezone: "GMT+5:30"
 };
 
 function setup() {
@@ -28,6 +31,14 @@ function setup() {
     iSheet = doc.insertSheet(CONFIG.invSheet);
     iSheet.getRange(1, 1, 1, CONFIG.invHeaders.length).setValues([CONFIG.invHeaders]).setFontWeight("bold");
     iSheet.setFrozenRows(1);
+  }
+
+  // Setup Expenses (NEW)
+  let eSheet = doc.getSheetByName(CONFIG.expSheet);
+  if (!eSheet) {
+    eSheet = doc.insertSheet(CONFIG.expSheet);
+    eSheet.getRange(1, 1, 1, CONFIG.expHeaders.length).setValues([CONFIG.expHeaders]).setFontWeight("bold");
+    eSheet.setFrozenRows(1);
   }
   
   PropertiesService.getScriptProperties().setProperty('key', doc.getId());
@@ -49,9 +60,11 @@ function doPost(e) {
         e.parameter['Customer Name'] || "",
         e.parameter['Phone'] || "",
         e.parameter['Address'] || "",
-        e.parameter['SKU Sold'] || "",
+        e.parameter['SKU'] || "",
         e.parameter['Qty'] || "",
-        e.parameter['Total Amt'] || ""
+        e.parameter['Retail Price'] || "",
+        e.parameter['Shipping Charge'] || "",
+        e.parameter['Total Paid'] || ""
       ];
       sheet.appendRow(newRow);
       return responseJSON({ result: 'success' });
@@ -61,23 +74,36 @@ function doPost(e) {
       const newRow = [
         e.parameter['SKU'] || "",
         e.parameter['Item Name'] || "",
+        e.parameter['Category'] || "",
         e.parameter['Size'] || "",
-        e.parameter['Price'] || "",
+        e.parameter['Cost Price'] || "",
+        e.parameter['Retail Price'] || "",
         e.parameter['Initial Stock'] || ""
       ];
       sheet.appendRow(newRow);
       return responseJSON({ result: 'success' });
 
+    } else if (action === 'create_expense') {
+      const sheet = doc.getSheetByName(CONFIG.expSheet);
+      const newRow = [
+        Utilities.formatDate(new Date(), CONFIG.timezone, "yyyy-MM-dd HH:mm:ss"),
+        e.parameter['Category'] || "",
+        e.parameter['Amount'] || "",
+        e.parameter['Notes'] || ""
+      ];
+      sheet.appendRow(newRow);
+      return responseJSON({ result: 'success' });
+
     } else if (action === 'delete_sale') {
-      const sheet = doc.getSheetByName(CONFIG.salesSheet);
-      const row = parseInt(e.parameter.row);
-      if (row > 1) sheet.deleteRow(row); // Prevent deleting header
+      deleteRow(doc, CONFIG.salesSheet, e.parameter.row);
       return responseJSON({ result: 'success' });
 
     } else if (action === 'delete_inventory') {
-      const sheet = doc.getSheetByName(CONFIG.invSheet);
-      const row = parseInt(e.parameter.row);
-      if (row > 1) sheet.deleteRow(row); // Prevent deleting header
+      deleteRow(doc, CONFIG.invSheet, e.parameter.row);
+      return responseJSON({ result: 'success' });
+      
+    } else if (action === 'delete_expense') {
+      deleteRow(doc, CONFIG.expSheet, e.parameter.row);
       return responseJSON({ result: 'success' });
     }
 
@@ -89,6 +115,12 @@ function doPost(e) {
   }
 }
 
+function deleteRow(doc, sheetName, rowParam) {
+  const sheet = doc.getSheetByName(sheetName);
+  const row = parseInt(rowParam);
+  if (row > 1) sheet.deleteRow(row);
+}
+
 function doGet(e) {
   const cache = CacheService.getScriptCache();
   const cachedData = cache.get('everlyMasterData');
@@ -96,13 +128,19 @@ function doGet(e) {
   if (cachedData) return responseJSON(JSON.parse(cachedData));
   
   const doc = SpreadsheetApp.getActiveSpreadsheet();
-  const salesData = doc.getSheetByName(CONFIG.salesSheet).getDataRange().getValues();
-  const invData = doc.getSheetByName(CONFIG.invSheet).getDataRange().getValues();
+  const salesData = getDataSafely(doc, CONFIG.salesSheet);
+  const invData = getDataSafely(doc, CONFIG.invSheet);
+  const expData = getDataSafely(doc, CONFIG.expSheet);
   
-  const payload = { sales: salesData, inventory: invData };
+  const payload = { sales: salesData, inventory: invData, expenses: expData };
   cache.put('everlyMasterData', JSON.stringify(payload), 300); 
   
   return responseJSON(payload);
+}
+
+function getDataSafely(doc, sheetName) {
+  const sheet = doc.getSheetByName(sheetName);
+  return sheet ? sheet.getDataRange().getValues() : [];
 }
 
 function responseJSON(content) {

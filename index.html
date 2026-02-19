@@ -78,6 +78,10 @@
                             class="nav-item text-slate-500 hover:text-slate-900 flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all">
                             <i class="ri-archive-line mr-2"></i> Inventory
                         </button>
+                        <button onclick="switchTab('expenses')"
+                            class="nav-item text-slate-500 hover:text-slate-900 flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                            <i class="ri-wallet-2-line mr-2"></i> Expenses
+                        </button>
                     </div>
                 </div>
             </div>
@@ -92,53 +96,9 @@
 
             <!-- DASHBOARD VIEW -->
             <div id="view-dashboard" class="view-section animate-fade-in">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Overview</h2>
-                    <button onclick="loadData(true)" class="p-2 text-slate-400 hover:text-indigo-600 transition-colors"
-                        title="Force Refresh">
-                        <i class="ri-refresh-line text-xl"></i>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <!-- Revenue Card -->
-                    <div
-                        class="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 rounded-2xl shadow-lg shadow-indigo-200 text-white relative overflow-hidden group">
-                        <div
-                            class="absolute -right-6 -top-6 w-24 h-24 bg-white opacity-10 rounded-full group-hover:scale-150 transition-transform duration-500">
-                        </div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="p-2 bg-white/20 rounded-lg backdrop-blur-sm"><i
-                                        class="ri-wallet-3-line text-xl"></i></div>
-                                <span class="text-xs font-medium bg-white/20 px-2 py-1 rounded-full">+2.5%</span>
-                            </div>
-                            <p class="text-indigo-100 text-sm font-medium">Total Revenue</p>
-                            <h3 id="dash-revenue" class="text-3xl font-bold mt-1 tracking-tight">₹0.00</h3>
-                        </div>
-                    </div>
-
-                    <!-- Sales Card -->
-                    <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-indigo-100 transition-colors">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i
-                                    class="ri-shopping-cart-2-line text-xl"></i></div>
-                        </div>
-                        <p class="text-slate-500 text-sm font-medium">Items Sold</p>
-                        <h3 id="dash-sold" class="text-3xl font-bold mt-1 text-slate-800">0</h3>
-                    </div>
-
-                    <!-- Alerts Card -->
-                    <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-rose-100 transition-colors">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="p-2 bg-rose-50 text-rose-600 rounded-lg"><i
-                                    class="ri-alarm-warning-line text-xl"></i></div>
-                        </div>
-                        <p class="text-slate-500 text-sm font-medium">Low Stock Alerts</p>
-                        <h3 id="dash-alerts" class="text-3xl font-bold mt-1 text-slate-800">0</h3>
-                    </div>
+                <!-- Advanced KPI Grid to be injected here via JS -->
+                <div id="kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Dynamic Content -->
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -223,11 +183,26 @@
                                                 required>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-xs font-semibold text-slate-500 uppercase">Total
-                                                (₹)</label>
-                                            <input name="Total Amt" type="number" step="0.01" placeholder="0.00"
+                                            <label class="text-xs font-semibold text-slate-500 uppercase">Unit
+                                                Price</label>
+                                            <input name="Retail Price" type="number" step="0.01" placeholder="0.00"
                                                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-right font-mono"
                                                 required>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="space-y-1">
+                                            <label
+                                                class="text-xs font-semibold text-slate-500 uppercase">Shipping</label>
+                                            <input name="Shipping Charge" type="number" step="0.01" placeholder="0.00"
+                                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-right font-mono">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-xs font-semibold text-slate-500 uppercase">Total
+                                                Paid</label>
+                                            <input name="Total Paid" type="number" step="0.01" placeholder="0.00"
+                                                class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-right font-mono font-bold text-slate-800">
                                         </div>
                                     </div>
 
@@ -285,10 +260,10 @@
                             <h2 class="text-xl font-bold text-slate-800 mb-6">Add New Product</h2>
                             <form id="invForm" class="space-y-4">
                                 <div class="grid grid-cols-2 gap-4">
-                                    <select id="prodType"
+                                    <select id="prodType" name="Category"
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
                                         onchange="generateSku()">
-                                        <option value="" disabled selected>Select Type</option>
+                                        <option value="" disabled selected>Select Category</option>
                                         <option value="ABA">Abaya</option>
                                         <option value="GWN">Gown</option>
                                         <option value="CRD">Cord Set</option>
@@ -307,10 +282,13 @@
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
                                         required>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-3 gap-4">
                                     <input name="Size" type="text" placeholder="Size"
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500">
-                                    <input name="Price" type="number" placeholder="Price (₹)"
+                                    <input name="Cost Price" type="number" placeholder="Cost (₹)"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
+                                        required>
+                                    <input name="Retail Price" type="number" placeholder="Retail (₹)"
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
                                         required>
                                 </div>
@@ -360,6 +338,77 @@
                 </div>
             </div>
 
+            <!-- EXPENSES VIEW -->
+            <div id="view-expenses" class="view-section hidden animate-fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Add Expense Form -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+                            <h2 class="text-xl font-bold text-slate-800 mb-6">Log Expense</h2>
+                            <form id="expForm" class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Category</label>
+                                    <select name="Category"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
+                                        required>
+                                        <option value="" disabled selected>Select Category</option>
+                                        <option value="Ads">Marketing / Ads</option>
+                                        <option value="Packaging">Packaging Material</option>
+                                        <option value="Logistics">Logistics / Shipping</option>
+                                        <option value="Salary">Staff Salary</option>
+                                        <option value="Rent">Rent / Utilities</option>
+                                        <option value="Restock">Inventory Restock</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Amount (₹)</label>
+                                    <input name="Amount" type="number" step="0.01" placeholder="0.00"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 font-mono text-right"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Notes</label>
+                                    <textarea name="Notes" rows="3" placeholder="Description..."
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"></textarea>
+                                </div>
+                                <button type="button" onclick="submitData('expForm', 'create_expense')"
+                                    class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+                                    Log Expense
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Expense History -->
+                    <div class="lg:col-span-2">
+                        <h2 class="text-lg font-bold text-slate-800 mb-4">Expense History</h2>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead
+                                        class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase">
+                                        <tr>
+                                            <th class="px-6 py-3">Date</th>
+                                            <th class="px-6 py-3">Category</th>
+                                            <th class="px-6 py-3">Notes</th>
+                                            <th class="px-6 py-3 text-right">Amount</th>
+                                            <th class="px-6 py-3 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expTableBody" class="divide-y divide-slate-100 text-sm">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-8 text-center text-slate-400">Loading
+                                                expenses...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -372,6 +421,7 @@
         let state = {
             sales: [],
             inventory: [],
+            expenses: [],
             skus: []
         };
 
@@ -451,90 +501,182 @@
         function processData(data) {
             state.sales = data.sales.slice(1);
             state.inventory = data.inventory.slice(1);
+            state.expenses = data.expenses ? data.expenses.slice(1) : [];
 
             // Extract unique SKUs for auto-complete
             state.skus = [...new Set(state.inventory.map(row => row[0]))].filter(Boolean);
             document.getElementById('totalSkuCount').innerText = `${state.skus.length} SKUs`;
 
-            renderDashboard();
+            renderFinancials();
+            renderStockTable(); // Renamed from renderDashboard to be specific
             renderSalesHistory();
             renderInventoryList();
+            renderExpenses();
         }
 
         // --- RENDERING ---
-        function renderDashboard() {
-            // Calculate Stock Logic
-            // 1. Sum Initial Stock per SKU
-            let stockMap = {}; // SKU -> Initial Count
+        function renderFinancials() {
+            // 1. Calculate Metrics
+            let totalRevenue = 0;
+            let totalCOGS = 0;
+            let totalExpenses = 0;
+            let inventoryCapital = 0;
+            let potentialRevenue = 0;
+
+            // Inventory Math
+            let costMap = {}; // SKU -> Cost Price
             state.inventory.forEach(row => {
                 const sku = row[0];
-                const count = parseInt(row[4]) || 0;
-                stockMap[sku] = (stockMap[sku] || 0) + count;
+                const count = parseInt(row[6]) || 0; // Updated Index (Initial Stock)
+                const cost = parseFloat(row[4]) || 0; // Cost Price
+                const retail = parseFloat(row[5]) || 0; // Retail Price
+
+                costMap[sku] = cost;
+
+                // Note: This is an approximation based on Initial Stock. 
+                // A true "Current Stock" requires subtracting sales.
+                // We'll calculate "Current Stock" below.
             });
 
-            // 2. Subtract Sales
-            let totalRevenue = 0;
-            let totalItemsSold = 0;
+            // Sales Math
+            let stockMap = {}; // SKU -> Current Count (Initial - Sold)
+            state.inventory.forEach(row => {
+                stockMap[row[0]] = parseInt(row[6]) || 0;
+            });
 
             state.sales.forEach(row => {
-                const sku = row[4]; // Updated Index
-                const qty = parseInt(row[5]) || 0; // Updated Index
-                const amt = parseFloat(row[6]) || 0; // Updated Index
+                const sku = row[4];
+                const qty = parseInt(row[5]) || 0;
+                const paid = parseFloat(row[8]) || 0; // Total Paid
 
-                totalRevenue += amt;
-                totalItemsSold += qty;
+                totalRevenue += paid;
+
+                const cost = costMap[sku] || 0;
+                totalCOGS += (cost * qty);
 
                 if (stockMap[sku] !== undefined) {
                     stockMap[sku] -= qty;
                 }
             });
 
-            // 3. Update DOM
-            document.getElementById('dash-revenue').innerText = `₹${totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-            document.getElementById('dash-sold').innerText = totalItemsSold;
+            // Expenses Math
+            state.expenses.forEach(row => {
+                totalExpenses += parseFloat(row[2]) || 0;
+            });
 
-            // 4. Render Stock Table & Alerts
+            // Final Inventory Value
+            Object.keys(stockMap).forEach(sku => {
+                const count = stockMap[sku];
+                const item = state.inventory.find(r => r[0] === sku);
+                if (item && count > 0) {
+                    const cost = parseFloat(item[4]) || 0;
+                    const retail = parseFloat(item[5]) || 0;
+                    inventoryCapital += (count * cost);
+                    potentialRevenue += (count * retail);
+                }
+            });
+
+            const netProfit = totalRevenue - totalCOGS - totalExpenses;
+            const margin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+            const itemsSold = state.sales.reduce((acc, row) => acc + (parseInt(row[5]) || 0), 0);
+            const avgOrderValue = state.sales.length > 0 ? totalRevenue / state.sales.length : 0;
+
+            // 2. Render Grid
+            const grid = document.getElementById('kpi-grid');
+            grid.innerHTML = `
+                ${createKpiCard('Total Revenue', totalRevenue, 'ri-wallet-3-line', 'indigo')}
+                ${createKpiCard('Net Profit', netProfit, 'ri-hand-coin-line', netProfit >= 0 ? 'emerald' : 'rose')}
+                ${createKpiCard('Profit Margin', margin.toFixed(1) + '%', 'ri-percent-line', margin >= 20 ? 'emerald' : 'orange', true)}
+                ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose')}
+                
+                ${createKpiCard('Inventory Capital', inventoryCapital, 'ri-safe-2-line', 'blue')}
+                ${createKpiCard('Potential Sales', potentialRevenue, 'ri-funds-line', 'violet')}
+                ${createKpiCard('Items Sold', itemsSold, 'ri-shopping-bag-3-line', 'slate', true)}
+                ${createKpiCard('Avg Order Value', avgOrderValue, 'ri-user-star-line', 'amber')}
+            `;
+        }
+
+        function createKpiCard(title, value, icon, color, isText = false) {
+            const displayVal = isText ? value : `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+            return `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-${color}-200 transition-colors">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 bg-${color}-50 text-${color}-600 rounded-lg"><i class="${icon} text-xl"></i></div>
+                    </div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">${title}</p>
+                    <h3 class="text-2xl font-bold mt-1 text-slate-800">${displayVal}</h3>
+                </div>
+            `;
+        }
+
+        function renderStockTable() {
+            // Calculate Stock (Simplified for Table)
+            let stockMap = {};
+            state.inventory.forEach(row => stockMap[row[0]] = parseInt(row[6]) || 0);
+            state.sales.forEach(row => {
+                const sku = row[4];
+                const qty = parseInt(row[5]) || 0;
+                if (stockMap[sku] !== undefined) stockMap[sku] -= qty;
+            });
+
             const tbody = document.getElementById('stockTableBody');
             tbody.innerHTML = '';
-            let lowStockCount = 0;
 
-            // Convert map to array for sorting
+            // Render logic same as before...
             const stockArray = Object.keys(stockMap).map(sku => {
-                // Find name from inventory list (first match)
                 const item = state.inventory.find(r => r[0] === sku);
-                return {
-                    sku,
-                    name: item ? item[1] : 'Unknown Item',
-                    count: stockMap[sku]
-                };
+                return { sku, name: item ? item[1] : '?', count: stockMap[sku] };
             });
 
             if (stockArray.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">No inventory data found. Add items first.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">No data.</td></tr>';
                 return;
             }
 
             stockArray.forEach(item => {
                 let statusHtml = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-bold">In Stock</span>';
-                if (item.count <= 5) {
-                    lowStockCount++;
-                    statusHtml = '<span class="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-bold">Low Stock</span>';
-                }
-                if (item.count <= 0) {
-                    statusHtml = '<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded-full text-xs font-bold">Sold Out</span>';
-                }
+                if (item.count <= 5) statusHtml = '<span class="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-bold">Low</span>';
+                if (item.count <= 0) statusHtml = '<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded-full text-xs font-bold">Out</span>';
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-6 py-3 font-medium text-slate-800">${item.name}</td>
-                    <td class="px-6 py-3 font-mono text-slate-500 text-xs">${item.sku}</td>
-                    <td class="px-6 py-3 text-center font-bold">${item.count}</td>
-                    <td class="px-6 py-3">${statusHtml}</td>
-                `;
-                tbody.appendChild(tr);
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td class="px-6 py-3 font-medium text-slate-800">${item.name}</td>
+                        <td class="px-6 py-3 font-mono text-slate-500 text-xs">${item.sku}</td>
+                        <td class="px-6 py-3 text-center font-bold">${item.count}</td>
+                        <td class="px-6 py-3">${statusHtml}</td>
+                    </tr>
+                `);
             });
+        }
 
-            document.getElementById('dash-alerts').innerText = lowStockCount;
+        function renderExpenses() {
+            const tbody = document.getElementById('expTableBody');
+            tbody.innerHTML = '';
+
+            if (state.expenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No expenses recorded.</td></tr>';
+                return;
+            }
+
+            state.expenses.slice(-20).reverse().forEach((row, i) => {
+                const date = row[0] ? new Date(row[0]).toLocaleDateString('en-IN') : '-';
+                const amt = parseFloat(row[2]) || 0;
+                const rowIndex = state.expenses.length - i + 1;
+
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-3 text-slate-500 text-xs">${date}</td>
+                        <td class="px-6 py-3 font-medium text-slate-700"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${row[1]}</span></td>
+                        <td class="px-6 py-3 text-slate-500 text-xs">${row[3]}</td>
+                        <td class="px-6 py-3 text-right font-bold text-rose-600">-₹${amt.toFixed(2)}</td>
+                        <td class="px-6 py-3 text-center">
+                            <button onclick="handleDelete('expense', ${rowIndex})" class="text-slate-400 hover:text-rose-600 transition-colors">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </td>
+                    </tr>
+                 `);
+            });
         }
 
         function renderSalesHistory() {
@@ -549,24 +691,30 @@
 
             recent.forEach((row, i) => {
                 const date = row[0] ? new Date(row[0]).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '-';
-                const amt = parseFloat(row[6]) || 0; // Updated Index
-                const rowIndex = state.sales.length - i + 1; // 1-based index (header=1, so data starts at 2)
+                const amt = parseFloat(row[8]) || 0; // Total Paid (Index 8)
+                const rowIndex = state.sales.length - i + 1;
+
+                // Copy Dispatch Data
+                const dispatchData = JSON.stringify({
+                    name: row[1], phone: row[2], addr: row[3], sku: row[4], qty: row[5]
+                });
 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-3 text-slate-500">${date}</td>
+                        <td class="px-6 py-3 text-slate-500 text-xs">${date}</td>
                         <td class="px-6 py-3 font-medium">
-                            <div class="text-slate-800">${row[1]}</div>
+                            <div class="text-slate-800 text-sm">${row[1]}</div>
+                            <div class="text-slate-400 text-xs">${row[2]}</div>
                         </td>
-                        <td class="px-6 py-3 text-xs text-slate-500">
-                            <div>${row[2] || '-'}</div>
-                            <div>${row[3] || '-'}</div>
-                        </td>
-                        <td class="px-6 py-3 font-mono text-xs bg-slate-50 rounded w-fit">${row[4]}</td>
-                        <td class="px-6 py-3 text-center">${row[5]}</td>
-                        <td class="px-6 py-3 text-right font-bold text-slate-700">₹${amt.toFixed(2)}</td>
-                        <td class="px-6 py-3 text-center">
-                            <button onclick="handleDelete('sale', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Sale">
+                        <td class="px-6 py-3 text-xs text-slate-500 max-w-[150px] truncate" title="${row[3]}">${row[3]}</td>
+                        <td class="px-6 py-3 font-mono text-xs bg-indigo-50 text-indigo-700 rounded w-fit px-2">${row[4]}</td>
+                        <td class="px-6 py-3 text-center font-bold">${row[5]}</td>
+                        <td class="px-6 py-3 text-right font-bold text-emerald-600">₹${amt.toFixed(2)}</td>
+                        <td class="px-6 py-3 text-center flex justify-center space-x-2">
+                             <button onclick='copyDispatch(this, ${dispatchData})' class="text-indigo-500 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Dispatch">
+                                <i class="ri-clipboard-line"></i>
+                            </button>
+                            <button onclick="handleDelete('sale', ${rowIndex})" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Sale">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </td>
@@ -585,17 +733,24 @@
             }
 
             state.inventory.forEach((row, i) => {
-                const price = parseFloat(row[3]) || 0;
-                const rowIndex = i + 2; // 1-based index (header=1)
+                const retail = parseFloat(row[5]) || 0;
+                const cost = parseFloat(row[4]) || 0;
+                const rowIndex = i + 2;
 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-3 font-mono text-xs font-semibold text-indigo-600">${row[0]}</td>
-                        <td class="px-6 py-3 font-medium">${row[1]}</td>
-                        <td class="px-6 py-3 text-slate-500 text-xs">${row[2]} | ₹${price}</td>
-                        <td class="px-6 py-3 text-center font-mono bg-slate-50">${row[4]}</td>
+                        <td class="px-6 py-3 font-medium">
+                            ${row[1]}
+                            <span class="ml-2 bg-slate-100 text-slate-500 text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wide">${row[2]}</span>
+                        </td>
+                        <td class="px-6 py-3 text-xs">
+                             <div class="font-bold text-slate-700">₹${retail} <span class="text-slate-400 font-normal line-through text-[10px]">₹${cost}</span></div>
+                             <div class="text-slate-400">${row[3]}</div>
+                        </td>
+                        <td class="px-6 py-3 text-center font-mono bg-slate-50">${row[6]}</td>
                         <td class="px-6 py-3 text-center">
-                            <button onclick="handleDelete('inventory', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Item">
+                            <button onclick="handleDelete('inventory', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </td>
@@ -605,10 +760,23 @@
         }
 
         // --- INTERACTION ---
-        function handleDelete(type, rowIndex) {
-            if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) return;
+        function copyDispatch(btn, data) {
+            const text = `*Everly Modish Dispatch*\nName: ${data.name}\nPhone: ${data.phone}\nAddress: ${data.addr}\nItem: ${data.sku} (Qty: ${data.qty})`;
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = btn.querySelector('i');
+                const origClass = icon.className;
+                icon.className = 'ri-check-line text-emerald-500';
+                setTimeout(() => icon.className = origClass, 2000);
+            });
+        }
 
-            const action = type === 'sale' ? 'delete_sale' : 'delete_inventory';
+        function handleDelete(type, rowIndex) {
+            if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+
+            let action = 'delete_sale';
+            if (type === 'inventory') action = 'delete_inventory';
+            if (type === 'expense') action = 'delete_expense';
+
             showToast('Deleting record...', 'info');
 
             const formData = new FormData();
@@ -629,9 +797,10 @@
         }
 
         function generateSku() {
-            const type = document.getElementById('prodType').value;
+            const type = document.getElementById('prodType').value; // ABA, GWN
             if (!type) return;
 
+            // Mapping if strictly required, but value already matches expectation
             const prefix = `EM-${type}-`;
             let maxNum = 0;
 
