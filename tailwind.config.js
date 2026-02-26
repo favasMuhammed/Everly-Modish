@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./*.html"],
+    content: ["./index.html"],
     safelist: [
         {
             pattern: /(bg|text|border|hover:border)-(indigo|emerald|cyan|blue|violet|rose|orange|amber|slate)-(50|200|600)/,
