@@ -444,6 +444,11 @@
 
             <!-- CAPITAL VIEW -->
             <div id="view-capital" class="view-section hidden animate-fade-in">
+                <!-- Capital KPI Grid -->
+                <div id="capital-kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Dynamic Content -->
+                </div>
+
                 <!-- Equity Cap Table Top Section -->
                 <div class="mb-8">
                     <h2 class="text-lg font-bold text-slate-800 mb-4"><i class="ri-bank-line mr-2"></i> Partner Equity
@@ -721,14 +726,24 @@
             const itemsSold = state.sales.reduce((acc, row) => acc + (parseInt(row[5]) || 0), 0);
             const avgOrderValue = state.sales.length > 0 ? totalRevenue / state.sales.length : 0;
 
+            // Calculate Business Capital
+            let totalBusinessCapital = 0;
+            state.capital.forEach(row => {
+                const type = row[2] || '';
+                const amt = parseFloat(row[3]) || 0;
+                if (type === 'Investment') totalBusinessCapital += amt;
+                else if (type === 'Withdrawal') totalBusinessCapital -= amt;
+            });
+
             // 2. Render Grid
             const grid = document.getElementById('kpi-grid');
             grid.innerHTML = `
                 ${createKpiCard('Total Revenue', totalRevenue, 'ri-wallet-3-line', 'indigo')}
                 ${createKpiCard('Net Profit', netProfit, 'ri-hand-coin-line', netProfit >= 0 ? 'emerald' : 'rose')}
+                ${createKpiCard('Total Capital', totalBusinessCapital, 'ri-bank-line', 'cyan')}
                 ${createKpiCard('Profit Margin', margin.toFixed(1) + '%', 'ri-percent-line', margin >= 20 ? 'emerald' : 'orange', true)}
-                ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose')}
                 
+                ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose')}
                 ${createKpiCard('Inventory Capital', inventoryCapital, 'ri-safe-2-line', 'blue')}
                 ${createKpiCard('Potential Sales', potentialRevenue, 'ri-funds-line', 'violet')}
                 ${createKpiCard('Items Sold', itemsSold, 'ri-shopping-bag-3-line', 'slate', true)}
@@ -963,6 +978,7 @@
         function renderCapital() {
             // 1. Calculate Equity Data
             const equityBody = document.getElementById('equityTableBody');
+            const kpiGrid = document.getElementById('capital-kpi-grid');
             equityBody.innerHTML = '';
 
             let partnersData = {};
@@ -1017,6 +1033,19 @@
                         </tr>
                     `);
                 });
+            }
+
+            // Render Capital KPIs
+            if (kpiGrid) {
+                const totalPlShare = state.netProfit || 0;
+                const totalEquityValue = totalBusinessCapital + totalPlShare;
+
+                kpiGrid.innerHTML = `
+                    ${createKpiCard('Total Invested Capital', totalBusinessCapital, 'ri-bank-card-line', 'blue')}
+                    ${createKpiCard('Equal Target (Per Partner)', equalTarget, 'ri-scales-3-line', 'indigo')}
+                    ${createKpiCard('Global Net Profit', totalPlShare, 'ri-hand-coin-line', totalPlShare >= 0 ? 'emerald' : 'rose')}
+                    ${createKpiCard('Total Equity Value', totalEquityValue, 'ri-safe-2-line', 'violet')}
+                `;
             }
 
             // 2. Render Capital Ledger History
