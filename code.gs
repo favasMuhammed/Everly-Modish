@@ -7,10 +7,12 @@ const CONFIG = {
   salesSheet: 'Sales',
   invSheet: 'Inventory',
   expSheet: 'Expenses',
+  capitalSheet: 'Capital',
   // Updated Schema
   salesHeaders: ['Date', 'Customer Name', 'Phone', 'Address', 'SKU', 'Qty', 'Retail Price', 'Shipping Charge', 'Total Paid'],
   invHeaders: ['SKU', 'Item Name', 'Category', 'Size', 'Cost Price', 'Retail Price', 'Initial Stock'],
   expHeaders: ['Date', 'Category', 'Amount', 'Notes'],
+  capitalHeaders: ['Date', 'Partner Name', 'Type', 'Amount', 'Notes'],
   timezone: "GMT+5:30"
 };
 
@@ -39,6 +41,14 @@ function setup() {
     eSheet = doc.insertSheet(CONFIG.expSheet);
     eSheet.getRange(1, 1, 1, CONFIG.expHeaders.length).setValues([CONFIG.expHeaders]).setFontWeight("bold");
     eSheet.setFrozenRows(1);
+  }
+
+  // Setup Capital (NEW)
+  let cSheet = doc.getSheetByName(CONFIG.capitalSheet);
+  if (!cSheet) {
+    cSheet = doc.insertSheet(CONFIG.capitalSheet);
+    cSheet.getRange(1, 1, 1, CONFIG.capitalHeaders.length).setValues([CONFIG.capitalHeaders]).setFontWeight("bold");
+    cSheet.setFrozenRows(1);
   }
   
   PropertiesService.getScriptProperties().setProperty('key', doc.getId());
@@ -94,6 +104,18 @@ function doPost(e) {
       sheet.appendRow(newRow);
       return responseJSON({ result: 'success' });
 
+    } else if (action === 'create_capital') {
+      const sheet = doc.getSheetByName(CONFIG.capitalSheet);
+      const newRow = [
+        Utilities.formatDate(new Date(), CONFIG.timezone, "yyyy-MM-dd HH:mm:ss"),
+        e.parameter['Partner Name'] || "",
+        e.parameter['Type'] || "",
+        e.parameter['Amount'] || "",
+        e.parameter['Notes'] || ""
+      ];
+      sheet.appendRow(newRow);
+      return responseJSON({ result: 'success' });
+
     } else if (action === 'delete_sale') {
       deleteRow(doc, CONFIG.salesSheet, e.parameter.row);
       return responseJSON({ result: 'success' });
@@ -104,6 +126,10 @@ function doPost(e) {
       
     } else if (action === 'delete_expense') {
       deleteRow(doc, CONFIG.expSheet, e.parameter.row);
+      return responseJSON({ result: 'success' });
+
+    } else if (action === 'delete_capital') {
+      deleteRow(doc, CONFIG.capitalSheet, e.parameter.row);
       return responseJSON({ result: 'success' });
     }
 
@@ -131,8 +157,9 @@ function doGet(e) {
   const salesData = getDataSafely(doc, CONFIG.salesSheet);
   const invData = getDataSafely(doc, CONFIG.invSheet);
   const expData = getDataSafely(doc, CONFIG.expSheet);
+  const capitalData = getDataSafely(doc, CONFIG.capitalSheet);
   
-  const payload = { sales: salesData, inventory: invData, expenses: expData };
+  const payload = { sales: salesData, inventory: invData, expenses: expData, capital: capitalData };
   cache.put('everlyMasterData', JSON.stringify(payload), 300); 
   
   return responseJSON(payload);

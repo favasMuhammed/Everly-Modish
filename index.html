@@ -82,6 +82,14 @@
                             class="nav-item text-slate-500 hover:text-slate-900 flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all">
                             <i class="ri-wallet-2-line mr-2"></i> Expenses
                         </button>
+                        <button onclick="switchTab('crm')"
+                            class="nav-item text-slate-500 hover:text-slate-900 flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                            <i class="ri-group-line mr-2"></i> CRM
+                        </button>
+                        <button onclick="switchTab('capital')"
+                            class="nav-item text-slate-500 hover:text-slate-900 flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                            <i class="ri-bank-line mr-2"></i> Capital
+                        </button>
                     </div>
                 </div>
             </div>
@@ -409,6 +417,139 @@
                 </div>
             </div>
 
+            <!-- CRM VIEW -->
+            <div id="view-crm" class="view-section hidden animate-fade-in">
+                <div class="mb-4 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800"><i class="ri-group-line mr-2"></i> CRM Directory</h2>
+                    <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium"
+                        id="crmTotalCustomers">0 Customers</span>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead
+                                class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase">
+                                <tr>
+                                    <th class="px-6 py-3">Customer Name</th>
+                                    <th class="px-6 py-3">Phone</th>
+                                    <th class="px-6 py-3 text-center">Total Orders</th>
+                                    <th class="px-6 py-3 text-right">Lifetime Value (LTV)</th>
+                                    <th class="px-6 py-3 text-center">Status</th>
+                                    <th class="px-6 py-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crmTableBody" class="divide-y divide-slate-100 text-sm">
+                                <tr>
+                                    <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading CRM data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CAPITAL VIEW -->
+            <div id="view-capital" class="view-section hidden animate-fade-in">
+                <!-- Equity Cap Table Top Section -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4"><i class="ri-bank-line mr-2"></i> Partner Equity
+                        Cap Table</h2>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead
+                                    class="bg-indigo-50 border-b border-indigo-100 text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-3">Partner Name</th>
+                                        <th class="px-6 py-3 text-right">Total Invested</th>
+                                        <th class="px-6 py-3 text-right">Equal Target</th>
+                                        <th class="px-6 py-3 text-right">Deficit / Surplus</th>
+                                        <th class="px-6 py-3 text-right">Current P&L Share</th>
+                                        <th class="px-6 py-3 text-right">Total Equity Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="equityTableBody" class="divide-y divide-slate-100 text-sm">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading equity
+                                            data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Add Capital Form -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+                            <h2 class="text-xl font-bold text-slate-800 mb-6">Log Investment / Withdrawal</h2>
+                            <form id="capitalForm" class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Partner Name</label>
+                                    <input name="Partner Name" type="text" placeholder="Partner Name"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Type</label>
+                                    <select name="Type"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
+                                        required>
+                                        <option value="Investment">Investment (Deposit)</option>
+                                        <option value="Withdrawal">Withdrawal</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Amount (₹)</label>
+                                    <input name="Amount" type="number" step="0.01" placeholder="0.00"
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 font-mono text-right"
+                                        required>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Notes</label>
+                                    <textarea name="Notes" rows="2" placeholder="Description..."
+                                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"></textarea>
+                                </div>
+                                <button type="button" onclick="submitData('capitalForm', 'create_capital')"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+                                    Record Transaction
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Capital History -->
+                    <div class="lg:col-span-2">
+                        <h2 class="text-lg font-bold text-slate-800 mb-4">Capital Ledger History</h2>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead
+                                        class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase">
+                                        <tr>
+                                            <th class="px-6 py-3">Date</th>
+                                            <th class="px-6 py-3">Partner</th>
+                                            <th class="px-6 py-3">Type</th>
+                                            <th class="px-6 py-3">Notes</th>
+                                            <th class="px-6 py-3 text-right">Amount</th>
+                                            <th class="px-6 py-3 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="capitalTableBody" class="divide-y divide-slate-100 text-sm">
+                                        <tr>
+                                            <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading
+                                                ledger...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -422,7 +563,9 @@
             sales: [],
             inventory: [],
             expenses: [],
-            skus: []
+            capital: [],
+            skus: [],
+            netProfit: 0 // Track for equity calculations
         };
 
         // --- SECURITY ---
@@ -502,6 +645,7 @@
             state.sales = data.sales.slice(1);
             state.inventory = data.inventory.slice(1);
             state.expenses = data.expenses ? data.expenses.slice(1) : [];
+            state.capital = data.capital ? data.capital.slice(1) : [];
 
             // Extract unique SKUs for auto-complete
             state.skus = [...new Set(state.inventory.map(row => row[0]))].filter(Boolean);
@@ -512,6 +656,8 @@
             renderSalesHistory();
             renderInventoryList();
             renderExpenses();
+            renderCrm();
+            renderCapital();
         }
 
         // --- RENDERING ---
@@ -577,6 +723,7 @@
             });
 
             const netProfit = totalRevenue - totalCOGS - totalExpenses;
+            state.netProfit = netProfit; // Save to state for Cap Table
             const margin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
             const itemsSold = state.sales.reduce((acc, row) => acc + (parseInt(row[5]) || 0), 0);
             const avgOrderValue = state.sales.length > 0 ? totalRevenue / state.sales.length : 0;
@@ -669,8 +816,11 @@
                         <td class="px-6 py-3 font-medium text-slate-700"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${row[1]}</span></td>
                         <td class="px-6 py-3 text-slate-500 text-xs">${row[3]}</td>
                         <td class="px-6 py-3 text-right font-bold text-rose-600">-₹${amt.toFixed(2)}</td>
-                        <td class="px-6 py-3 text-center">
-                            <button onclick="handleDelete('expense', ${rowIndex})" class="text-slate-400 hover:text-rose-600 transition-colors">
+                        <td class="px-6 py-3 text-center flex justify-center space-x-2">
+                            <button onclick="handleCopy(this, '${date} | ${row[1]} | ${row[3]} | ₹${amt.toFixed(2)}')" class="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Row">
+                                <i class="ri-clipboard-line"></i>
+                            </button>
+                            <button onclick="handleDelete('expense', ${rowIndex})" class="text-rose-400 hover:text-rose-600 transition-colors p-1.5 rounded-lg">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </td>
@@ -749,7 +899,10 @@
                              <div class="text-slate-400">${row[3]}</div>
                         </td>
                         <td class="px-6 py-3 text-center font-mono bg-slate-50">${row[6]}</td>
-                        <td class="px-6 py-3 text-center">
+                        <td class="px-6 py-3 text-center flex justify-center space-x-2">
+                            <button onclick="handleCopy(this, 'SKU: ${row[0]} | ${row[1]} | Cost: ₹${cost} | Retail: ₹${retail} | Stock: ${row[6]}')" class="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Row">
+                                <i class="ri-clipboard-line"></i>
+                            </button>
                             <button onclick="handleDelete('inventory', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
@@ -759,15 +912,175 @@
             });
         }
 
+        function renderCrm() {
+            const tbody = document.getElementById('crmTableBody');
+            tbody.innerHTML = '';
+
+            // Group sales by Phone
+            let customers = {};
+            state.sales.forEach(row => {
+                const name = row[1] || 'Unknown';
+                const phone = row[2] || '';
+                if (!phone) return; // Skip if no phone
+
+                const amt = parseFloat(row[8]) || 0;
+
+                if (!customers[phone]) {
+                    customers[phone] = { name: name, phone: phone, orders: 0, ltv: 0 };
+                }
+                customers[phone].orders += 1;
+                customers[phone].ltv += amt;
+                // keep the latest name just in case
+                if (name && customers[phone].name === 'Unknown') customers[phone].name = name;
+            });
+
+            const custArray = Object.values(customers).sort((a, b) => b.ltv - a.ltv);
+            document.getElementById('crmTotalCustomers').innerText = `${custArray.length} Customers`;
+
+            if (custArray.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No customers found.</td></tr>';
+                return;
+            }
+
+            custArray.forEach(c => {
+                let badge = '<span class="text-slate-400 text-xs font-medium">Standard</span>';
+                if (c.orders > 2 || c.ltv > 5000) {
+                    badge = '<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-bold"><i class="ri-vip-crown-fill align-middle mr-1"></i>VIP</span>';
+                }
+
+                const copyData = JSON.stringify(`Name: ${c.name}, Phone: ${c.phone}, Orders: ${c.orders}, LTV: ₹${c.ltv.toFixed(2)}`).replace(/'/g, "\\'");
+
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-3 font-medium text-slate-800">${c.name}</td>
+                        <td class="px-6 py-3 text-slate-600 font-mono text-xs">${c.phone}</td>
+                        <td class="px-6 py-3 text-center font-bold">${c.orders}</td>
+                        <td class="px-6 py-3 text-right font-bold text-emerald-600">₹${c.ltv.toFixed(2)}</td>
+                        <td class="px-6 py-3 text-center">${badge}</td>
+                        <td class="px-6 py-3 text-center flex justify-center space-x-2">
+                            <button onclick='handleCopy(this, ${copyData})' class="text-indigo-500 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Info">
+                                <i class="ri-clipboard-line"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        function renderCapital() {
+            // 1. Calculate Equity Data
+            const equityBody = document.getElementById('equityTableBody');
+            equityBody.innerHTML = '';
+
+            let partnersData = {};
+            let totalBusinessCapital = 0;
+
+            state.capital.forEach(row => {
+                const partner = row[1] || 'Unknown';
+                const type = row[2] || '';
+                const amt = parseFloat(row[3]) || 0;
+
+                if (!partnersData[partner]) partnersData[partner] = { invested: 0 };
+
+                if (type === 'Investment') {
+                    partnersData[partner].invested += amt;
+                    totalBusinessCapital += amt;
+                } else if (type === 'Withdrawal') {
+                    partnersData[partner].invested -= amt;
+                    totalBusinessCapital -= amt;
+                }
+            });
+
+            const partners = Object.keys(partnersData);
+            const numPartners = partners.length || 1; // Prevent div by zero safeguard
+
+            const equalTarget = numPartners > 0 ? totalBusinessCapital / numPartners : 0;
+            const plShare = numPartners > 0 ? (parseFloat(state.netProfit) || 0) / numPartners : 0;
+
+            if (partners.length === 0) {
+                equityBody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No partner capital data available.</td></tr>';
+            } else {
+                partners.forEach(p => {
+                    const invested = partnersData[p].invested;
+                    const deficitSurplus = invested - equalTarget;
+                    const equityVal = invested + plShare;
+
+                    let defSurpHtml = `<span class="font-bold text-slate-600">₹${deficitSurplus.toFixed(2)}</span>`;
+                    if (deficitSurplus > 0) defSurpHtml = `<span class="font-bold text-emerald-600">+₹${deficitSurplus.toFixed(2)}</span>`;
+                    if (deficitSurplus < 0) defSurpHtml = `<span class="font-bold text-rose-600">-₹${Math.abs(deficitSurplus).toFixed(2)}</span>`;
+
+                    let plHtml = `<span class="font-bold text-slate-600">₹${plShare.toFixed(2)}</span>`;
+                    if (plShare > 0) plHtml = `<span class="font-bold text-emerald-600">+₹${plShare.toFixed(2)}</span>`;
+                    if (plShare < 0) plHtml = `<span class="font-bold text-rose-600">-₹${Math.abs(plShare).toFixed(2)}</span>`;
+
+                    equityBody.insertAdjacentHTML('beforeend', `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-3 font-bold text-slate-800">${p}</td>
+                            <td class="px-6 py-3 text-right font-medium text-slate-600">₹${invested.toFixed(2)}</td>
+                            <td class="px-6 py-3 text-right font-medium text-slate-500">₹${equalTarget.toFixed(2)}</td>
+                            <td class="px-6 py-3 text-right">${defSurpHtml}</td>
+                            <td class="px-6 py-3 text-right">${plHtml}</td>
+                            <td class="px-6 py-3 text-right font-bold text-indigo-700 text-base">₹${equityVal.toFixed(2)}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // 2. Render Capital Ledger History
+            const ledgerBody = document.getElementById('capitalTableBody');
+            ledgerBody.innerHTML = '';
+
+            if (state.capital.length === 0) {
+                ledgerBody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No capital transactions yet.</td></tr>';
+                return;
+            }
+
+            state.capital.slice(-20).reverse().forEach((row, i) => {
+                const date = row[0] ? new Date(row[0]).toLocaleDateString('en-IN') : '-';
+                const partner = row[1];
+                const type = row[2];
+                const notes = row[4];
+                const amt = parseFloat(row[3]) || 0;
+                const rowIndex = state.capital.length - i + 1;
+
+                let amtHtml = `<span class="font-bold text-emerald-600">+₹${amt.toFixed(2)}</span>`;
+                if (type === 'Withdrawal') amtHtml = `<span class="font-bold text-rose-600">-₹${amt.toFixed(2)}</span>`;
+
+                const copyData = JSON.stringify(`${date} | ${partner} | ${type} | ₹${amt.toFixed(2)} | ${notes}`).replace(/'/g, "\\'");
+
+                ledgerBody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-3 text-slate-500 text-xs">${date}</td>
+                        <td class="px-6 py-3 font-medium text-slate-700">${partner}</td>
+                        <td class="px-6 py-3 font-medium"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${type}</span></td>
+                        <td class="px-6 py-3 text-slate-500 text-xs max-w-[150px] truncate" title="${notes}">${notes}</td>
+                        <td class="px-6 py-3 text-right">${amtHtml}</td>
+                        <td class="px-6 py-3 text-center flex justify-center space-x-2">
+                            <button onclick='handleCopy(this, ${copyData})' class="text-indigo-500 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Row">
+                                <i class="ri-clipboard-line"></i>
+                            </button>
+                            <button onclick="handleDelete('capital', ${rowIndex})" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
         // --- INTERACTION ---
-        function copyDispatch(btn, data) {
-            const text = `*Everly Modish Dispatch*\nName: ${data.name}\nPhone: ${data.phone}\nAddress: ${data.addr}\nItem: ${data.sku} (Qty: ${data.qty})`;
+        function handleCopy(btn, text) {
             navigator.clipboard.writeText(text).then(() => {
                 const icon = btn.querySelector('i');
                 const origClass = icon.className;
-                icon.className = 'ri-check-line text-emerald-500';
+                icon.className = 'ri-check-line text-emerald-500 text-lg';
                 setTimeout(() => icon.className = origClass, 2000);
             });
+        }
+
+        function copyDispatch(btn, data) {
+            const text = `* Everly Modish Dispatch *\nName: ${data.name} \nPhone: ${data.phone} \nAddress: ${data.addr} \nItem: ${data.sku} (Qty: ${data.qty})`;
+            handleCopy(btn, text);
         }
 
         function handleDelete(type, rowIndex) {
@@ -776,6 +1089,7 @@
             let action = 'delete_sale';
             if (type === 'inventory') action = 'delete_inventory';
             if (type === 'expense') action = 'delete_expense';
+            if (type === 'capital') action = 'delete_capital';
 
             showToast('Deleting record...', 'info');
 
@@ -801,7 +1115,7 @@
             if (!type) return;
 
             // Mapping if strictly required, but value already matches expectation
-            const prefix = `EM-${type}-`;
+            const prefix = `EM - ${type} -`;
             let maxNum = 0;
 
             state.inventory.forEach(row => {
@@ -816,7 +1130,7 @@
             });
 
             const nextNum = String(maxNum + 1).padStart(3, '0');
-            document.getElementById('genSku').value = `${prefix}${nextNum}`;
+            document.getElementById('genSku').value = `${prefix}${nextNum} `;
         }
 
         function handleSkuSearch(query) {
@@ -842,8 +1156,8 @@
                 const div = document.createElement('div');
                 div.className = 'px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0';
                 div.innerHTML = `
-                    <div class="font-mono font-bold text-slate-700 text-sm">${sku}</div>
-                    <div class="text-xs text-slate-500">${meta}</div>
+                    < div class="font-mono font-bold text-slate-700 text-sm" > ${sku}</div >
+                        <div class="text-xs text-slate-500">${meta}</div>
                 `;
                 div.onclick = () => selectSku(sku);
                 dropdown.appendChild(div);
@@ -871,7 +1185,7 @@
                     nameDisplay.className = 'text-xs text-indigo-600 font-medium mt-1 animate-fade-in px-1';
                     document.getElementById('skuInput').parentNode.appendChild(nameDisplay);
                 }
-                nameDisplay.innerText = `${item[1]} • ${item[3]}`; // Name • Size
+                nameDisplay.innerText = `${item[1]} • ${item[3]} `; // Name • Size
 
                 calculateTotal();
             }
@@ -897,7 +1211,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const inputs = ['Qty', 'Retail Price', 'Shipping Charge'];
             inputs.forEach(name => {
-                const el = document.querySelector(`input[name="${name}"]`);
+                const el = document.querySelector(`input[name = "${name}"]`);
                 if (el) el.addEventListener('input', calculateTotal);
             });
         });
@@ -941,7 +1255,7 @@
             if (type === 'success') colorClass = 'bg-emerald-600 text-white';
             if (type === 'error') colorClass = 'bg-rose-600 text-white';
 
-            toast.className = `fixed bottom-6 right-6 z-50 transform transition-all duration-300 px-6 py-3 rounded-xl shadow-2xl flex items-center ${colorClass}`;
+            toast.className = `fixed bottom - 6 right - 6 z - 50 transform transition - all duration - 300 px - 6 py - 3 rounded - xl shadow - 2xl flex items - center ${colorClass}`;
             toast.innerHTML = msg;
 
             // Show
