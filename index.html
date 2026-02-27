@@ -483,11 +483,12 @@
                                         <th class="px-6 py-3 text-right">Deficit / Surplus</th>
                                         <th class="px-6 py-3 text-right">Current P&L Share</th>
                                         <th class="px-6 py-3 text-right">Total Equity Value</th>
+                                        <th class="px-6 py-3 text-right">Ownership</th>
                                     </tr>
                                 </thead>
                                 <tbody id="equityTableBody" class="divide-y divide-slate-100 text-sm">
                                     <tr>
-                                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading equity
+                                        <td colspan="7" class="px-6 py-8 text-center text-slate-400">Loading equity
                                             data...</td>
                                     </tr>
                                 </tbody>
@@ -758,6 +759,24 @@
                 else if (type === 'Withdrawal') totalBusinessCapital -= amt;
             });
 
+            // --- MBA Percentage Metrics ---
+            const expenseRatio = totalRevenue > 0 ? (totalExpenses / totalRevenue) * 100 : 0;
+            const avgItemMargin = itemsSold > 0 ? (totalRevenue - totalCOGS) / itemsSold : 0;
+            const avgItemCost = itemsSold > 0 ? totalCOGS / itemsSold : 0;
+            const avgMarginPercent = avgItemCost > 0 ? (avgItemMargin / avgItemCost) * 100 : 0;
+
+            let expBadge = '';
+            if (expenseRatio > 0) {
+                const color = expenseRatio > 25 ? 'rose' : 'emerald';
+                expBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Expense Ratio">${expenseRatio.toFixed(1)}% Rev</span>`;
+            }
+
+            let aovBadge = '';
+            if (avgMarginPercent > 0) {
+                const color = avgMarginPercent >= 50 ? 'emerald' : 'amber';
+                aovBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Avg Profit Margin per Item">+${avgMarginPercent.toFixed(1)}% Margin</span>`;
+            }
+
             // 2. Render Grid
             const grid = document.getElementById('kpi-grid');
             grid.innerHTML = `
@@ -766,20 +785,21 @@
                 ${createKpiCard('Total Capital', totalBusinessCapital, 'ri-bank-line', 'cyan')}
                 ${createKpiCard('Profit Margin', margin.toFixed(1) + '%', 'ri-percent-line', margin >= 20 ? 'emerald' : 'orange', true)}
                 
-                ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose')}
+                ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose', false, expBadge)}
                 ${createKpiCard('Inventory Capital', inventoryCapital, 'ri-safe-2-line', 'blue')}
                 ${createKpiCard('Potential Sales', potentialRevenue, 'ri-funds-line', 'violet')}
                 ${createKpiCard('Items Sold', itemsSold, 'ri-shopping-bag-3-line', 'slate', true)}
-                ${createKpiCard('Avg Order Value', avgOrderValue, 'ri-user-star-line', 'amber')}
+                ${createKpiCard('Avg Order Value', avgOrderValue, 'ri-user-star-line', 'amber', false, aovBadge)}
             `;
         }
 
-        function createKpiCard(title, value, icon, color, isText = false) {
+        function createKpiCard(title, value, icon, color, isText = false, subtextHtml = '') {
             const displayVal = isText ? value : `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
             return `
                 <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-${color}-200 transition-colors min-w-0">
                     <div class="flex justify-between items-start mb-3 sm:mb-4">
                         <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-${color}-50 text-${color}-600 rounded-lg shrink-0"><i class="${icon} text-lg sm:text-xl leading-none"></i></div>
+                        ${subtextHtml}
                     </div>
                     <p class="text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate mb-1">${title}</p>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-800 truncate">${displayVal}</h3>
@@ -1040,13 +1060,16 @@
             const equalTarget = numPartners > 0 ? totalBusinessCapital / numPartners : 0;
             const plShare = numPartners > 0 ? (parseFloat(state.netProfit) || 0) / numPartners : 0;
 
+            const totalEqValueAll = partners.reduce((sum, p) => sum + partnersData[p].invested + plShare, 0);
+
             if (partners.length === 0) {
-                equityBody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No partner capital data available.</td></tr>';
+                equityBody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">No partner capital data available.</td></tr>';
             } else {
                 partners.forEach(p => {
                     const invested = partnersData[p].invested;
                     const deficitSurplus = invested - equalTarget;
                     const equityVal = invested + plShare;
+                    const ownership = totalEqValueAll > 0 ? (equityVal / totalEqValueAll) * 100 : 0;
 
                     let defSurpHtml = `<span class="font-bold text-slate-600">₹${deficitSurplus.toFixed(2)}</span>`;
                     if (deficitSurplus > 0) defSurpHtml = `<span class="font-bold text-emerald-600">+₹${deficitSurplus.toFixed(2)}</span>`;
@@ -1064,6 +1087,7 @@
                             <td class="px-6 py-3 text-right">${defSurpHtml}</td>
                             <td class="px-6 py-3 text-right">${plHtml}</td>
                             <td class="px-6 py-3 text-right font-bold text-indigo-700 text-base">₹${equityVal.toFixed(2)}</td>
+                            <td class="px-6 py-3 text-right"><span class="bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded text-xs border border-slate-200">${ownership.toFixed(1)}%</span></td>
                         </tr>
                     `);
                 });
