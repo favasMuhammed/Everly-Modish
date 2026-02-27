@@ -1390,7 +1390,7 @@
                 newRowData = [nowTime, formData.get('Customer Name'), formData.get('Phone'), formData.get('Address'), formData.get('SKU'), formData.get('Qty'), formData.get('Retail Price'), formData.get('Shipping Charge'), formData.get('Total Paid')];
                 if (isEdit && arrIndex !== null) state.sales[arrIndex] = newRowData;
                 else state.sales.push(newRowData);
-                renderSalesHistory(); renderStockTable(); renderKpiGrid();
+                renderSalesHistory(); renderStockTable(); renderFinancials();
             } else if (action.includes('inventory')) {
                 newRowData = [formData.get('SKU'), formData.get('Item Name'), formData.get('Category'), formData.get('Size'), formData.get('Cost Price'), formData.get('Retail Price'), formData.get('Initial Stock')];
                 if (isEdit && arrIndex !== null) state.inventory[arrIndex] = newRowData;
@@ -1400,12 +1400,12 @@
                 newRowData = [nowTime, formData.get('Category'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.expenses[arrIndex] = newRowData;
                 else state.expenses.push(newRowData);
-                renderExpenses(); renderKpiGrid();
+                renderExpenses(); renderFinancials();
             } else if (action.includes('capital')) {
                 newRowData = [nowTime, formData.get('Partner Name'), formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.capital[arrIndex] = newRowData;
                 else state.capital.push(newRowData);
-                renderCapital(); renderKpiGrid();
+                renderCapital(); renderFinancials();
             }
 
             // Immediately clear the UI so it looks done
