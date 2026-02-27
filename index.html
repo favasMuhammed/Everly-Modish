@@ -1560,7 +1560,7 @@
                 btn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
 
                 // Override the onclick action explicitly
-                const mutationStr = `update_${module === 'sales' ? 'sale' : module === 'expenses' ? 'expense' : module === 'inventory' ? 'inventory' : 'capital'}`;
+                const mutationStr = `edit_${module === 'sales' ? 'sale' : module === 'expenses' ? 'expense' : module === 'inventory' ? 'inventory' : 'capital'}`;
                 btn.setAttribute('onclick', `submitData('${formId}', '${mutationStr}')`);
             }
 
