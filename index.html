@@ -143,6 +143,7 @@
                             <div class="px-6 -mt-8">
                                 <form id="saleForm"
                                     class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-4">
+                                    <input type="hidden" name="row" id="row-saleForm">
                                     <div class="space-y-1">
                                         <label class="text-xs font-semibold text-slate-500 uppercase">Customer</label>
                                         <input name="Customer Name" type="text" placeholder="Customer Name"
@@ -258,8 +259,9 @@
                     <!-- Add Product Form -->
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
-                            <h2 class="text-xl font-bold text-slate-800 mb-6">Add New Product</h2>
+                            <h2 class="text-xl font-bold text-slate-800 mb-6" id="header-invForm">Add New Product</h2>
                             <form id="invForm" class="space-y-4">
+                                <input type="hidden" name="row" id="row-invForm">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <select id="prodType" name="Category"
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"
@@ -345,8 +347,9 @@
                     <!-- Add Expense Form -->
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
-                            <h2 class="text-xl font-bold text-slate-800 mb-6">Log Expense</h2>
+                            <h2 class="text-xl font-bold text-slate-800 mb-6" id="header-expForm">Log Expense</h2>
                             <form id="expForm" class="space-y-4">
+                                <input type="hidden" name="row" id="row-expForm">
                                 <div>
                                     <label class="text-xs font-semibold text-slate-500 uppercase">Category</label>
                                     <select name="Category"
@@ -488,8 +491,10 @@
                     <!-- Add Capital Form -->
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
-                            <h2 class="text-xl font-bold text-slate-800 mb-6">Log Investment / Withdrawal</h2>
+                            <h2 class="text-xl font-bold text-slate-800 mb-6" id="header-capitalForm">Log Transaction
+                            </h2>
                             <form id="capitalForm" class="space-y-4">
+                                <input type="hidden" name="row" id="row-capitalForm">
                                 <div>
                                     <label class="text-xs font-semibold text-slate-500 uppercase">Partner Name</label>
                                     <select id="partnerSelect" name="Partner Name" onchange="handlePartnerSelect(this)"
@@ -564,7 +569,7 @@
     <script>
         // --- CONFIGURATION ---
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdrU6Ww-xeJ3xFuNbSp2Xl-YywzTZBOirU18EW2gF2Zj81EZwaJ9vPMkSZx0icyT_Z/exec';
-        const PIN_HASH = 'b7015e90bd4d4b99bca16491c26b0e3fa3f2ef5f10353b05bb93e566b132904d'; // SHA-256 for em@6090
+        const PIN_HASH = 'b7015e90bd4d4b99bca16491c26b0e3fa3f2ef5f10353b05bb93e566b132904d';
 
         // --- APP STATE ---
         let state = {
@@ -838,7 +843,10 @@
                             <button onclick="copyExpense(this, ${copyPayload})" class="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Row">
                                 <i class="ri-clipboard-line"></i>
                             </button>
-                            <button onclick="handleDelete('expense', ${rowIndex})" class="text-rose-400 hover:text-rose-600 transition-colors p-1.5 rounded-lg">
+                            <button onclick="editRecord('expenses', ${rowIndex})" class="text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors" title="Edit Record">
+                                <i class="ri-edit-2-line"></i>
+                            </button>
+                            <button onclick="handleDelete('expense', ${rowIndex})" class="text-rose-400 hover:text-rose-600 transition-colors p-1.5 rounded-lg" title="Delete Expense">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </td>
@@ -882,6 +890,9 @@
                              <button onclick="copyDispatch(this, ${dispatchData})" class="text-indigo-500 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Dispatch">
                                 <i class="ri-clipboard-line"></i>
                             </button>
+                            <button onclick="editRecord('sales', ${rowIndex})" class="text-emerald-500 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors" title="Edit Sale">
+                                <i class="ri-edit-2-line"></i>
+                            </button>
                             <button onclick="handleDelete('sale', ${rowIndex})" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Sale">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
@@ -922,7 +933,10 @@
                             <button onclick="copyInventory(this, ${copyPayload})" class="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Row">
                                 <i class="ri-clipboard-line"></i>
                             </button>
-                            <button onclick="handleDelete('inventory', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors">
+                            <button onclick="editRecord('inventory', ${rowIndex})" class="text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors" title="Edit Catalog">
+                                <i class="ri-edit-2-line"></i>
+                            </button>
+                            <button onclick="handleDelete('inventory', ${rowIndex})" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Product">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </td>
@@ -1108,7 +1122,10 @@
                             <button onclick="copyCapitalInfo(this, ${copyData})" class="text-indigo-500 hover:bg-indigo-50 p-1.5 rounded-lg transition-colors" title="Copy Row">
                                 <i class="ri-clipboard-line"></i>
                             </button>
-                            <button onclick="handleDelete('capital', ${rowIndex})" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors">
+                            <button onclick="editRecord('capital', ${rowIndex})" class="text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 p-1.5 rounded-lg transition-colors" title="Edit Transaction">
+                                <i class="ri-edit-2-line"></i>
+                            </button>
+                            <button onclick="handleDelete('capital', ${rowIndex})" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="Delete Ledger Entry">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </td>
@@ -1352,6 +1369,7 @@
 
             const btn = document.querySelector(`#${formId} button`);
             const originalText = btn.innerHTML;
+            const originalColor = btn.className;
             btn.disabled = true;
             btn.innerHTML = '<i class="ri-loader-4-line animate-spin text-xl"></i>';
 
@@ -1359,21 +1377,76 @@
             formData.append('action', action);
             formData.append('auth', PIN_HASH);
 
+            // --- OPTIMISTIC UI LOGIC (Zero Latency) ---
+            const isEdit = action.startsWith('update_') || action.startsWith('edit_');
+            const rowStr = formData.get('row');
+            const arrIndex = rowStr ? parseInt(rowStr) - 2 : null;
+
+            // Build pseudo-row array matching Google API format
+            let newRowData;
+            const nowTime = new Date().toISOString(); // Temporary Date
+
+            if (action.includes('sale')) {
+                newRowData = [nowTime, formData.get('Customer Name'), formData.get('Phone'), formData.get('Address'), formData.get('SKU'), formData.get('Qty'), formData.get('Retail Price'), formData.get('Shipping Charge'), formData.get('Total Paid')];
+                if (isEdit && arrIndex !== null) state.sales[arrIndex] = newRowData;
+                else state.sales.push(newRowData);
+                renderSalesHistory(); renderStockTable(); renderKpiGrid();
+            } else if (action.includes('inventory')) {
+                newRowData = [formData.get('SKU'), formData.get('Item Name'), formData.get('Category'), formData.get('Size'), formData.get('Cost Price'), formData.get('Retail Price'), formData.get('Initial Stock')];
+                if (isEdit && arrIndex !== null) state.inventory[arrIndex] = newRowData;
+                else state.inventory.push(newRowData);
+                renderInventoryList();
+            } else if (action.includes('expense')) {
+                newRowData = [nowTime, formData.get('Category'), formData.get('Amount'), formData.get('Notes')];
+                if (isEdit && arrIndex !== null) state.expenses[arrIndex] = newRowData;
+                else state.expenses.push(newRowData);
+                renderExpenses(); renderKpiGrid();
+            } else if (action.includes('capital')) {
+                newRowData = [nowTime, formData.get('Partner Name'), formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
+                if (isEdit && arrIndex !== null) state.capital[arrIndex] = newRowData;
+                else state.capital.push(newRowData);
+                renderCapital(); renderKpiGrid();
+            }
+
+            // Immediately clear the UI so it looks done
+            form.reset();
+            const hiddenRow = document.getElementById(`row-${formId}`);
+            if (hiddenRow) hiddenRow.value = ''; // Reset Form State
+            showToast('Saving to DB...', 'info');
+
+            // Reset Button visually so they can do another action instantly
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+
+            // Revert "Save Changes" back to Add if it was an edit
+            if (isEdit) {
+                const header = document.getElementById(`header-${formId}`);
+                if (header) header.innerHTML = header.innerHTML.replace('Edit Record', formId === 'saleForm' ? 'New Sale' : formId === 'expForm' ? 'Log Expense' : formId === 'invForm' ? 'Add New Product' : 'Log Transaction').replace('<span class="text-indigo-600"><i class="ri-edit-2-line mr-2"></i>', '').replace('</span>', '');
+
+                const btnContext = document.getElementById(`btnText-${formId}`);
+                if (formId === 'saleForm' && btnContext) btnContext.innerText = 'Complete Sale';
+                else if (formId === 'invForm') btn.innerHTML = 'Add to Catalog';
+                else if (formId === 'expForm') btn.innerHTML = 'Log Expense';
+                else if (formId === 'capitalForm') btn.innerHTML = 'Record Transaction';
+
+                btn.className = originalColor.replace('emerald', 'indigo').replace('emerald-700', 'indigo-700'); // Dirty Fix Switch Back
+                btn.setAttribute('onclick', `submitData('${formId}', 'create_${action.split('_')[1]}')`);
+            }
+
+            // Execute the Background Fetch
             fetch(SCRIPT_URL, { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {
                     if (data.result === 'success') {
-                        showToast('Transaction Success', 'success');
-                        form.reset();
-                        loadData(true, true); // Sync silently
-                    } else throw new Error(data.error);
+                        showToast(isEdit ? 'Changes Pushed Live' : 'Transaction Pushed Live', 'success');
+                        // Silent master sync just to make sure dates and backend auto-formats align perfectly
+                        loadData(true, true);
+                    } else {
+                        throw new Error(data.error);
+                    }
                 })
                 .catch(err => {
-                    showToast('Error: ' + err.message, 'error');
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
+                    showToast('Sync Error: ' + err.message + '. Refresh to rollback.', 'error');
                 });
         }
 
@@ -1413,6 +1486,89 @@
 
         // Init
         loadData();
+        // --- CRUD EDIT PIPELINE ---
+        function editRecord(module, rowIndex) {
+            // Find the data based on exactly what row we are targeting. Note: Google Sheet arrays are 0-indexed internally here vs their sheet coordinates
+            // Map the Module string to internal State arrays
+            let dataRow;
+            let formId;
+            let fieldsObj = {};
+
+            // We must subtract 2 from rowIndex because Google Sheets starts row 1 as Headers, row 2 as data[0].
+            const arrIndex = rowIndex - 2;
+
+            if (module === 'sales') {
+                dataRow = state.sales[arrIndex];
+                formId = 'saleForm';
+                fieldsObj = {
+                    'Customer Name': dataRow[1], 'Phone': dataRow[2], 'Address': dataRow[3],
+                    'SKU': dataRow[4], 'Qty': dataRow[5], 'Retail Price': dataRow[6],
+                    'Shipping Charge': dataRow[7], 'Total Paid': dataRow[8]
+                };
+            } else if (module === 'inventory') {
+                dataRow = state.inventory[arrIndex];
+                formId = 'invForm';
+                fieldsObj = {
+                    'SKU': dataRow[0], 'Item Name': dataRow[1], 'Category': dataRow[2],
+                    'Size': dataRow[3], 'Cost Price': dataRow[4], 'Retail Price': dataRow[5],
+                    'Initial Stock': dataRow[6]
+                };
+            } else if (module === 'expenses') {
+                dataRow = state.expenses[arrIndex];
+                formId = 'expForm';
+                fieldsObj = {
+                    'Category': dataRow[1], 'Amount': dataRow[2], 'Notes': dataRow[3]
+                };
+            } else if (module === 'capital') {
+                dataRow = state.capital[arrIndex];
+                formId = 'capitalForm';
+                // Trigger the partner logic
+                const pSelect = document.getElementById('partnerSelect');
+                if (pSelect) pSelect.value = dataRow[1];
+                fieldsObj = {
+                    'Type': dataRow[2], 'Amount': dataRow[3], 'Notes': dataRow[4]
+                };
+            }
+
+            if (!dataRow) return;
+
+            // 1. Populate Hidden Row ID Tracking
+            document.getElementById(`row-${formId}`).value = rowIndex;
+
+            // 2. Populate Inputs
+            const formObj = document.getElementById(formId);
+            for (const [key, val] of Object.entries(fieldsObj)) {
+                const els = formObj.querySelectorAll(`[name="${key}"]`);
+                if (els.length > 0) {
+                    els[0].value = val;
+                }
+            }
+
+            // 3. UI Changes
+            const header = document.getElementById(`header-${formId}`);
+            if (header) header.innerHTML = `<span class="text-indigo-600"><i class="ri-edit-2-line mr-2"></i>Edit Record</span>`;
+
+            const btn = document.querySelector(`#${formId} button`);
+            if (btn) {
+                const btnContent = document.getElementById(`btnText-${formId}`);
+                if (btnContent) {
+                    btnContent.innerText = "Save Changes";
+                } else {
+                    btn.innerHTML = `<i class="ri-save-3-fill mr-2"></i> Save Changes`;
+                }
+                btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+                btn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
+
+                // Override the onclick action explicitly
+                const mutationStr = `update_${module === 'sales' ? 'sale' : module === 'expenses' ? 'expense' : module === 'inventory' ? 'inventory' : 'capital'}`;
+                btn.setAttribute('onclick', `submitData('${formId}', '${mutationStr}')`);
+            }
+
+            // 4. Scroll to top Smoothly
+            formObj.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            showToast('Ready to edit', 'info');
+        }
+
     </script>
 </body>
 
