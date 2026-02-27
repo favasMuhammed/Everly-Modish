@@ -1432,17 +1432,17 @@
                 newRowData = [nowTime, formData.get('Customer Name'), formData.get('Phone'), formData.get('Address'), formData.get('SKU'), formData.get('Qty'), formData.get('Retail Price'), formData.get('Shipping Charge'), formData.get('Total Paid')];
                 if (isEdit && arrIndex !== null) state.sales[arrIndex] = newRowData;
                 else state.sales.push(newRowData);
-                renderSalesHistory(); renderStockTable(); renderFinancials();
+                renderSalesHistory(); renderStockTable(); renderFinancials(); renderCrm(); renderCapital();
             } else if (action.includes('inventory')) {
                 newRowData = [formData.get('SKU'), formData.get('Item Name'), formData.get('Category'), formData.get('Size'), formData.get('Cost Price'), formData.get('Retail Price'), formData.get('Initial Stock')];
                 if (isEdit && arrIndex !== null) state.inventory[arrIndex] = newRowData;
                 else state.inventory.push(newRowData);
-                renderInventoryList();
+                renderInventoryList(); renderStockTable(); renderFinancials(); renderCapital();
             } else if (action.includes('expense')) {
                 newRowData = [nowTime, formData.get('Category'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.expenses[arrIndex] = newRowData;
                 else state.expenses.push(newRowData);
-                renderExpenses(); renderFinancials();
+                renderExpenses(); renderFinancials(); renderCapital();
             } else if (action.includes('capital')) {
                 newRowData = [nowTime, formData.get('Partner Name'), formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.capital[arrIndex] = newRowData;
@@ -1454,6 +1454,18 @@
             form.reset();
             const hiddenRow = document.getElementById(`row-${formId}`);
             if (hiddenRow) hiddenRow.value = ''; // Reset Form State
+
+            // Clean up custom dynamic UI states that form.reset() misses
+            if (formId === 'capitalForm') {
+                const pSelect = document.getElementById('partnerSelect');
+                if (pSelect) handlePartnerSelect(pSelect);
+            } else if (formId === 'saleForm') {
+                const nameDisplay = document.getElementById('skuItemName');
+                if (nameDisplay) nameDisplay.innerText = '';
+            } else if (formId === 'invForm') {
+                const genSku = document.getElementById('genSku');
+                if (genSku) genSku.value = '';
+            }
             showToast('Saving to DB...', 'info');
 
             // Reset Button visually so they can do another action instantly
@@ -1572,7 +1584,10 @@
                 formId = 'capitalForm';
                 // Trigger the partner logic
                 const pSelect = document.getElementById('partnerSelect');
-                if (pSelect) pSelect.value = dataRow[1];
+                if (pSelect) {
+                    pSelect.value = dataRow[1];
+                    handlePartnerSelect(pSelect);
+                }
                 fieldsObj = {
                     'Type': dataRow[2], 'Amount': dataRow[3], 'Notes': dataRow[4]
                 };
