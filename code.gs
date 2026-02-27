@@ -16,6 +16,8 @@ const CONFIG = {
   timezone: "GMT+5:30"
 };
 
+const SECRET = 'b7015e90bd4d4b99bca16491c26b0e3fa3f2ef5f10353b05bb93e566b132904d';
+
 function setup() {
   const doc = SpreadsheetApp.getActiveSpreadsheet();
   
@@ -59,6 +61,11 @@ function doPost(e) {
   lock.tryLock(10000);
 
   try {
+    // SECURITY GUARD
+    if (!e.parameter.auth || e.parameter.auth !== SECRET) {
+      return responseJSON({ result: 'error', error: 'Unauthorized Access. Invalid Token.' });
+    }
+
     const doc = SpreadsheetApp.getActiveSpreadsheet();
     const action = e.parameter.action;
     CacheService.getScriptCache().remove('everlyMasterData');
