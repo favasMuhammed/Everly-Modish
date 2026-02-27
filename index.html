@@ -625,27 +625,26 @@
         }
 
         // --- DATA MANAGEMENT ---
-        function loadData(force = false) {
-            if (!force) {
+        function loadData(force = false, silent = false) {
+            if (!force && !silent) {
                 const cached = localStorage.getItem('everlyDb');
                 if (cached) {
                     processData(JSON.parse(cached));
-                    showToast('Loaded from cache', 'info');
                 }
             }
 
-            if (force) showToast('Syncing with cloud...', 'info');
+            if (force && !silent) showToast('Syncing with cloud...', 'info');
 
             fetch(SCRIPT_URL)
                 .then(res => res.json())
                 .then(data => {
                     localStorage.setItem('everlyDb', JSON.stringify(data));
                     processData(data);
-                    if (force) showToast('Sync complete', 'success');
+                    if (force && !silent) showToast('Sync complete', 'success');
                 })
                 .catch(err => {
                     console.error(err);
-                    showToast('Sync failed. Check connection.', 'error');
+                    if (!silent) showToast('Sync failed. Check connection.', 'error');
                 });
         }
 
@@ -1230,7 +1229,7 @@
                 .then(data => {
                     if (data.result === 'success') {
                         showToast('Record deleted', 'success');
-                        loadData(true);
+                        loadData(true, true); // Silent sync
                     } else throw new Error(data.error);
                 })
                 .catch(err => {
@@ -1366,7 +1365,7 @@
                     if (data.result === 'success') {
                         showToast('Transaction Success', 'success');
                         form.reset();
-                        loadData(true); // Sync
+                        loadData(true, true); // Sync silently
                     } else throw new Error(data.error);
                 })
                 .catch(err => {
@@ -1378,14 +1377,28 @@
                 });
         }
 
+        let toastTimeout; // Manage notification queue
+
         function showToast(msg, type = 'info') {
             const toast = document.getElementById('statusMsg');
             let colorClass = 'bg-slate-800 text-white';
-            if (type === 'success') colorClass = 'bg-emerald-600 text-white';
-            if (type === 'error') colorClass = 'bg-rose-600 text-white';
+            let iconHtml = '<i class="ri-information-line mr-2 text-xl"></i>';
+
+            if (type === 'success') {
+                colorClass = 'bg-emerald-600 text-white';
+                iconHtml = '<i class="ri-checkbox-circle-fill mr-2 text-xl"></i>';
+            } else if (type === 'error') {
+                colorClass = 'bg-rose-600 text-white';
+                iconHtml = '<i class="ri-error-warning-fill mr-2 text-xl"></i>';
+            } else if (msg.includes('Sync') || msg.includes('Deleting')) {
+                iconHtml = '<i class="ri-loader-4-line animate-spin mr-2 text-xl"></i>';
+            }
 
             toast.className = `fixed bottom-6 right-6 z-50 transform transition-all duration-300 px-6 py-3 rounded-xl shadow-2xl flex items-center ${colorClass}`;
-            toast.innerHTML = msg;
+            toast.innerHTML = `${iconHtml} <span class="font-medium">${msg}</span>`;
+
+            // Clear existing timeout so notifications don't interrupt each other instantly
+            if (toastTimeout) clearTimeout(toastTimeout);
 
             // Show
             requestAnimationFrame(() => {
@@ -1393,7 +1406,7 @@
             });
 
             // Hide
-            setTimeout(() => {
+            toastTimeout = setTimeout(() => {
                 toast.classList.add('translate-y-24', 'opacity-0');
             }, 3000);
         }
