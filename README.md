@@ -5,9 +5,9 @@ Welcome to the **Everly Modish Serverless ERP** repository! This project is a st
 ## Features
 - **Serverless Architecture**: Runs entirely on client-side HTML/JS, using Google Sheets and Google Apps Script as the backend database.
 - **Zero-Latency CRUD**: Features a hyper-optimized optimistic UI that renders data mutations (Creates and Edits) instantly while silently syncing with the cloud in the background.
-- **Financial Dashboard**: Real-time KPI tracking for revenue, expenses, net profit, and total capital investment.
+- **Financial Dashboard**: Executive-level real-time KPI tracking for revenue, expenses, net profit, and total capital investment. Features dynamic MBA percentage ratios including Expense Ratios, Average Profit Margins per item, and explicit Capital Ownership distributions.
 - **POS & Sales**: Point-of-Sale interface with intelligent SKU autocomplete and localized WhatsApp export payloads.
-- **Master Inventory**: Automated SKU generation with prefix matching and comprehensive catalog management.
+- **Master Inventory**: Automated SKU generation with prefix matching, comprehensive catalog management, and a WhatsApp-ready 1-click 'Copy Catalog' generator aggregating live stock counts.
 - **CRM Integration**: Dynamic customer lifetime value (LTV) and order aggregation calculated entirely in the browser with smart VIP badging.
 - **Capital Ledger**: Partner cap table and equity tracking mapping individual deficits and surpluses against global net profit.
 
