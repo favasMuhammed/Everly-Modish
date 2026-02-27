@@ -105,8 +105,14 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
                         <h3 class="font-semibold text-slate-800">Live Inventory Status</h3>
-                        <span
-                            class="text-xs font-medium bg-slate-100 text-slate-500 px-2 py-1 rounded-full">Real-time</span>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="copyFullCatalog(this)"
+                                class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center shadow-sm whitespace-nowrap">
+                                <i class="ri-file-copy-line mr-1.5"></i> Copy Catalog
+                            </button>
+                            <span
+                                class="text-xs font-medium bg-slate-100 text-slate-500 px-2 py-1 rounded-full hidden sm:inline-block">Real-time</span>
+                        </div>
                     </div>
                     <div class="overflow-x-auto scroller pb-2">
                         <table class="w-full text-left whitespace-nowrap">
@@ -275,6 +281,9 @@
                                         <option value="SHL">Shawl</option>
                                         <option value="KFT">Kaftans</option>
                                         <option value="JMP">Modest Jumpsuits</option>
+                                        <option value="SKT">Skirt</option>
+                                        <option value="SHR">Shirt</option>
+                                        <option value="OTH">Other</option>
                                     </select>
                                     <input name="SKU" id="genSku" type="text" placeholder="Auto-SKU"
                                         class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-lg outline-none uppercase font-mono text-slate-500 cursor-not-allowed"
@@ -1224,6 +1233,39 @@
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Cap Table copied to clipboard!', 'success');
             });
+        }
+
+        function copyFullCatalog(btn) {
+            const now = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+            let text = `*Everly Modish | ERP*\n_Generated: ${now}_\n\n*📦 Full Product Catalog*\n\n`;
+
+            if (state.inventory.length === 0) {
+                text += "No products in catalog.";
+                handleCopy(btn, text);
+                return;
+            }
+
+            // Calculate current stock accurately
+            let stockMap = {};
+            state.inventory.forEach(row => stockMap[row[0]] = parseInt(row[6]) || 0);
+            state.sales.forEach(row => {
+                const sku = row[4];
+                const qty = parseInt(row[5]) || 0;
+                if (stockMap[sku] !== undefined) stockMap[sku] -= qty;
+            });
+
+            state.inventory.forEach(row => {
+                const sku = row[0];
+                const name = row[1] || '-';
+                const size = row[3] || 'N/A';
+                const retail = parseFloat(row[5]) || 0;
+                const stock = stockMap[sku] || 0;
+
+                text += `🔹 *${name}* (${size})\n`;
+                text += `*SKU:* ${sku} | *Price:* ₹${retail.toFixed(2)} | *Stock:* ${stock}\n\n`;
+            });
+
+            handleCopy(btn, text);
         }
 
         function handleDelete(type, rowIndex) {
