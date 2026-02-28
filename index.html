@@ -44,11 +44,11 @@
     <div id="app-container" class="min-h-full flex flex-col hidden opacity-0 transition-opacity duration-500">
 
         <!-- Navigation -->
-        <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col md:flex-row justify-between h-auto md:h-16 items-center py-3 md:py-0 transition-all">
-                    <div class="flex items-center space-x-2 mb-3 md:mb-0">
+                <div class="flex justify-between h-16 items-center">
+                    <!-- Logo & Brand -->
+                    <div class="flex items-center space-x-2">
                         <div class="bg-indigo-600 text-white p-1.5 rounded-lg">
                             <i class="ri-command-fill text-xl"></i>
                         </div>
@@ -57,37 +57,80 @@
                             Modish</span>
                     </div>
 
-                    <div
-                        class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto whitespace-nowrap scroller w-full md:w-auto max-w-full">
+                    <!-- Desktop Menu (Hidden on Mobile) -->
+                    <div class="hidden lg:flex space-x-1 bg-slate-100 p-1 rounded-xl">
                         <button onclick="switchTab('dashboard')" id="nav-dashboard"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold active:scale-[0.98]">
-                            <i class="ri-dashboard-line mr-3 text-lg"></i> Dashboard
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold active:scale-[0.98]">
+                            <i class="ri-dashboard-line mr-2 text-lg"></i> Dashboard
                         </button>
                         <button onclick="switchTab('sale')" id="nav-sale"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
-                            <i class="ri-shopping-cart-2-line mr-3 text-lg"></i> New Sale
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                            <i class="ri-shopping-cart-2-line mr-2 text-lg"></i> New Sale
                         </button>
                         <button onclick="switchTab('inventory')" id="nav-inventory"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
-                            <i class="ri-box-3-line mr-3 text-lg"></i> Inventory
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                            <i class="ri-box-3-line mr-2 text-lg"></i> Inventory
                         </button>
                         <button onclick="switchTab('expense')" id="nav-expense"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
-                            <i class="ri-bill-line mr-3 text-lg"></i> Expenses
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                            <i class="ri-bill-line mr-2 text-lg"></i> Expenses
                         </button>
                         <button onclick="switchTab('crm')" id="nav-crm"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
-                            <i class="ri-group-line mr-3 text-lg"></i> CRM Directory
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                            <i class="ri-group-line mr-2 text-lg"></i> CRM
                         </button>
                         <button onclick="switchTab('capital')" id="nav-capital"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
-                            <i class="ri-briefcase-4-line mr-3 text-lg"></i> Capital
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                            <i class="ri-briefcase-4-line mr-2 text-lg"></i> Capital
                         </button>
                         <button onclick="switchTab('bank')" id="nav-bank"
-                            class="w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
-                            <i class="ri-safe-2-line mr-3 text-lg"></i> Bank / Cashflow
+                            class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                            <i class="ri-safe-2-line mr-2 text-lg"></i> Bank / Cashflow
                         </button>
                     </div>
+
+                    <!-- Mobile Menu Toggle Button -->
+                    <div class="flex items-center lg:hidden">
+                        <button onclick="toggleMobileMenu()"
+                            class="text-slate-500 hover:text-indigo-600 focus:outline-none p-2 rounded-lg transition-colors">
+                            <i id="mobile-menu-icon" class="ri-menu-3-line text-2xl font-bold"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobile-menu"
+                class="lg:hidden hidden absolute top-16 left-0 w-full bg-white shadow-xl border-b border-slate-100 z-50">
+                <div class="px-4 pt-2 pb-6 space-y-1">
+                    <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold active:scale-[0.98]">
+                        <i class="ri-dashboard-line mr-3 text-lg"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('sale')" id="nav-mobile-sale"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        <i class="ri-shopping-cart-2-line mr-3 text-lg"></i> New Sale
+                    </button>
+                    <button onclick="switchTab('inventory')" id="nav-mobile-inventory"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        <i class="ri-box-3-line mr-3 text-lg"></i> Inventory
+                    </button>
+                    <button onclick="switchTab('expense')" id="nav-mobile-expense"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        <i class="ri-bill-line mr-3 text-lg"></i> Expenses
+                    </button>
+                    <button onclick="switchTab('crm')" id="nav-mobile-crm"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        <i class="ri-group-line mr-3 text-lg"></i> CRM Directory
+                    </button>
+                    <button onclick="switchTab('capital')" id="nav-mobile-capital"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        <i class="ri-briefcase-4-line mr-3 text-lg"></i> Capital
+                    </button>
+                    <button onclick="switchTab('bank')" id="nav-mobile-bank"
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        <i class="ri-safe-2-line mr-3 text-lg"></i> Bank / Cashflow
+                    </button>
                 </div>
             </div>
         </nav>
@@ -732,23 +775,51 @@
         }
 
         // --- NAVIGATION ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('ri-menu-3-line');
+                icon.classList.add('ri-close-line');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('ri-close-line');
+                icon.classList.add('ri-menu-3-line');
+            }
+        }
+
         function switchTab(tabId) {
             // Hide all sections
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            // Unstyle nav buttons
+
+            // Unstyle ALL nav buttons (both desktop and mobile)
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('nav-active', 'text-indigo-600', 'bg-indigo-50');
                 el.classList.add('text-slate-500');
             });
 
-            // Show selected
+            // Show selected view
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
 
-            // Style active button
-            const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('nav-active');
-                activeBtn.classList.remove('text-slate-500');
+            // Style active buttons (Desktop AND Mobile variants)
+            const activeDesktopBtn = document.getElementById(`nav-${tabId}`);
+            const activeMobileBtn = document.getElementById(`nav-mobile-${tabId}`);
+
+            if (activeDesktopBtn) {
+                activeDesktopBtn.classList.add('nav-active', 'text-indigo-600', 'bg-indigo-50');
+                activeDesktopBtn.classList.remove('text-slate-500');
+            }
+            if (activeMobileBtn) {
+                activeMobileBtn.classList.add('nav-active', 'text-indigo-600', 'bg-indigo-50');
+                activeMobileBtn.classList.remove('text-slate-500');
+            }
+
+            // Auto-collapse mobile menu on mobile selection
+            const menu = document.getElementById('mobile-menu');
+            if (menu && !menu.classList.contains('hidden')) {
+                toggleMobileMenu();
             }
         }
 
