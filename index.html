@@ -844,6 +844,31 @@
                 .catch(err => {
                     console.error(err);
                     if (!silent) showToast('Sync failed. Check connection.', 'error');
+
+                    // Fallback cleanup if initial load fails
+                    if (state.sales.length === 0) {
+                        const fallbacks = [
+                            { id: 'salesTableBody', cols: 5 },
+                            { id: 'stockTableBody', cols: 4 },
+                            { id: 'invTableBody', cols: 4 },
+                            { id: 'expTableBody', cols: 5 },
+                            { id: 'crmTableBody', cols: 6 },
+                            { id: 'equityTableBody', cols: 6 },
+                            { id: 'bankTableBody', cols: 6 }
+                        ];
+                        fallbacks.forEach(f => {
+                            const el = document.getElementById(f.id);
+                            if (el && el.innerHTML.includes('Loading')) {
+                                el.innerHTML = `<tr><td colspan="${f.cols}" class="px-6 py-8 text-center text-rose-400 font-medium whitespace-break-spaces">Network timeout. Please refresh or check connection.</td></tr>`;
+                            }
+                        });
+
+                        // Clear the KPI grid
+                        const kpiGrid = document.getElementById('kpi-grid');
+                        if (kpiGrid && kpiGrid.innerHTML.trim() === '') {
+                            kpiGrid.innerHTML = `<div class="col-span-full bg-rose-50 text-rose-600 p-4 rounded-lg text-center font-medium border border-rose-100">Backend connection timeout. Please refresh the page.</div>`;
+                        }
+                    }
                 });
         }
 
