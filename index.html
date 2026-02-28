@@ -794,7 +794,7 @@
             renderExpenses();
             renderCrm();
             renderCapital();
-            // renderBank(); // NEW - This function doesn't exist yet, so commenting out.
+            renderBank(); // NEW - Fully built in Phase 14
         }
 
         // --- RENDERING ---
@@ -1593,30 +1593,34 @@
             const nowTime = new Date().toISOString(); // Temporary Date
 
             if (action.includes('sale')) {
-                optimisticRow = [nowTime, formData.get('Customer Name'), formData.get('Phone'), formData.get('Address'), formData.get('SKU'), formData.get('Qty'), formData.get('Retail Price'), formData.get('Shipping Charge'), formData.get('Total Paid')];
+                const txDate = isEdit && arrIndex !== null ? state.sales[arrIndex][0] : nowTime;
+                optimisticRow = [txDate, formData.get('Customer Name'), formData.get('Phone'), formData.get('Address'), formData.get('SKU'), formData.get('Qty'), formData.get('Retail Price'), formData.get('Shipping Charge'), formData.get('Total Paid')];
                 if (isEdit && arrIndex !== null) state.sales[arrIndex] = optimisticRow;
                 else state.sales.push(optimisticRow);
-                renderSalesHistory(); renderStockTable(); renderFinancials(); renderCrm(); renderCapital(); // renderBank(); // No bank dependency here
+                renderSalesHistory(); renderStockTable(); renderFinancials(); renderCrm(); renderCapital(); renderBank(); // Sales inject cash
             } else if (action.includes('inventory')) {
                 optimisticRow = [formData.get('SKU'), formData.get('Item Name'), formData.get('Category'), formData.get('Size'), formData.get('Cost Price'), formData.get('Retail Price'), formData.get('Initial Stock')];
                 if (isEdit && arrIndex !== null) state.inventory[arrIndex] = optimisticRow;
                 else state.inventory.push(optimisticRow);
-                renderInventoryList(); renderStockTable(); renderFinancials(); renderCapital(); // renderBank(); // No bank dependency here
+                renderInventoryList(); renderStockTable(); renderFinancials(); renderCapital(); renderBank(); // Inventory drains cash
             } else if (action.includes('expense')) {
-                optimisticRow = [nowTime, formData.get('Category'), formData.get('Amount'), formData.get('Notes')];
+                const txDate = isEdit && arrIndex !== null ? state.expenses[arrIndex][0] : nowTime;
+                optimisticRow = [txDate, formData.get('Category'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.expenses[arrIndex] = optimisticRow;
                 else state.expenses.push(optimisticRow);
-                renderExpenses(); renderFinancials(); renderCapital(); // renderBank(); // No bank dependency here
+                renderExpenses(); renderFinancials(); renderCapital(); renderBank(); // Expenses drain cash
             } else if (action.includes('capital')) {
-                optimisticRow = [nowTime, formData.get('Partner Name'), formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
+                const txDate = isEdit && arrIndex !== null ? state.capital[arrIndex][0] : nowTime;
+                optimisticRow = [txDate, formData.get('Partner Name'), formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.capital[arrIndex] = optimisticRow;
                 else state.capital.push(optimisticRow);
-                renderCapital(); renderFinancials(); // renderBank(); // No bank dependency here
+                renderCapital(); renderFinancials(); renderBank(); // Capital flows cash
             } else if (action.includes('bank')) { // NEW
-                optimisticRow = [nowTime, formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
+                const txDate = isEdit && arrIndex !== null ? state.bank[arrIndex][0] : nowTime;
+                optimisticRow = [txDate, formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.bank[arrIndex] = optimisticRow;
                 else state.bank.push(optimisticRow);
-                // renderBank(); // This function doesn't exist yet, so commenting out.
+                renderBank(); // Triggers re-render for manual entries
             }
 
             // Immediately clear the UI so it looks done
