@@ -483,12 +483,11 @@
                                         <th class="px-6 py-3 text-right">Deficit / Surplus</th>
                                         <th class="px-6 py-3 text-right">Current P&L Share</th>
                                         <th class="px-6 py-3 text-right">Total Equity Value</th>
-                                        <th class="px-6 py-3 text-right">Ownership</th>
                                     </tr>
                                 </thead>
                                 <tbody id="equityTableBody" class="divide-y divide-slate-100 text-sm">
                                     <tr>
-                                        <td colspan="7" class="px-6 py-8 text-center text-slate-400">Loading equity
+                                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading equity
                                             data...</td>
                                     </tr>
                                 </tbody>
@@ -761,35 +760,62 @@
 
             // --- MBA Percentage Metrics ---
             const expenseRatio = totalRevenue > 0 ? (totalExpenses / totalRevenue) * 100 : 0;
-            const avgItemMargin = itemsSold > 0 ? (totalRevenue - totalCOGS) / itemsSold : 0;
-            const avgItemCost = itemsSold > 0 ? totalCOGS / itemsSold : 0;
-            const avgMarginPercent = avgItemCost > 0 ? (avgItemMargin / avgItemCost) * 100 : 0;
+            const grossMargin = totalRevenue > 0 ? ((totalRevenue - totalCOGS) / totalRevenue) * 100 : 0;
+            const roi = totalBusinessCapital > 0 ? (netProfit / totalBusinessCapital) * 100 : 0;
+            const totalInventoryItems = Object.values(stockMap).reduce((a, b) => a + b, 0);
+            const str = (itemsSold + totalInventoryItems) > 0 ? (itemsSold / (itemsSold + totalInventoryItems)) * 100 : 0;
+
+            // CRM Math for Unique Customers
+            const uniquePhones = new Set(state.sales.map(r => r[2])).size || 1;
+            const acv = state.sales.length > 0 ? totalRevenue / uniquePhones : 0;
+
+            let gmBadge = '';
+            if (grossMargin > 0) {
+                const color = grossMargin >= 40 ? 'emerald' : 'amber';
+                gmBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Gross Profit Margin">${grossMargin.toFixed(1)}% Gross</span>`;
+            }
+
+            let roiBadge = '';
+            // Only show ROI if there is capital invested to prevent 0 division/infinity bounds
+            if (totalBusinessCapital > 0) {
+                const color = roi > 0 ? 'emerald' : 'rose';
+                const sign = roi > 0 ? '+' : '';
+                roiBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Return on Investment">${sign}${roi.toFixed(1)}% ROI</span>`;
+            }
 
             let expBadge = '';
             if (expenseRatio > 0) {
-                const color = expenseRatio > 25 ? 'rose' : 'emerald';
+                const color = expenseRatio > 25 ? 'rose' : (expenseRatio < 15 ? 'emerald' : 'amber');
                 expBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Expense Ratio">${expenseRatio.toFixed(1)}% Rev</span>`;
             }
 
-            let aovBadge = '';
-            if (avgMarginPercent > 0) {
-                const color = avgMarginPercent >= 50 ? 'emerald' : 'amber';
-                aovBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Avg Profit Margin per Item">+${avgMarginPercent.toFixed(1)}% Margin</span>`;
+            let strBadge = '';
+            if (str > 0) {
+                const color = str >= 20 ? 'emerald' : 'amber'; // 20%+ STR is typically good velocity
+                strBadge = `<span class="bg-${color}-100 text-${color}-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Sell-Through Rate">${str.toFixed(1)}% Sold</span>`;
+            }
+
+            let acvBadge = '';
+            if (acv > 0 && acv !== avgOrderValue) { // Only show if they actually differ (returning customers)
+                const markup = ((acv - avgOrderValue) / avgOrderValue) * 100;
+                if (markup > 0) {
+                    acvBadge = `<span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full" title="Avg Customer Value">ACV: ₹${acv.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>`;
+                }
             }
 
             // 2. Render Grid
             const grid = document.getElementById('kpi-grid');
             grid.innerHTML = `
-                ${createKpiCard('Total Revenue', totalRevenue, 'ri-wallet-3-line', 'indigo')}
+                ${createKpiCard('Total Revenue', totalRevenue, 'ri-wallet-3-line', 'indigo', false, gmBadge)}
                 ${createKpiCard('Net Profit', netProfit, 'ri-hand-coin-line', netProfit >= 0 ? 'emerald' : 'rose')}
-                ${createKpiCard('Total Capital', totalBusinessCapital, 'ri-bank-line', 'cyan')}
+                ${createKpiCard('Total Capital', totalBusinessCapital, 'ri-bank-line', 'cyan', false, roiBadge)}
                 ${createKpiCard('Profit Margin', margin.toFixed(1) + '%', 'ri-percent-line', margin >= 20 ? 'emerald' : 'orange', true)}
                 
                 ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose', false, expBadge)}
                 ${createKpiCard('Inventory Capital', inventoryCapital, 'ri-safe-2-line', 'blue')}
                 ${createKpiCard('Potential Sales', potentialRevenue, 'ri-funds-line', 'violet')}
-                ${createKpiCard('Items Sold', itemsSold, 'ri-shopping-bag-3-line', 'slate', true)}
-                ${createKpiCard('Avg Order Value', avgOrderValue, 'ri-user-star-line', 'amber', false, aovBadge)}
+                ${createKpiCard('Items Sold', itemsSold, 'ri-shopping-bag-3-line', 'slate', true, strBadge)}
+                ${createKpiCard('Avg Order Value', avgOrderValue, 'ri-user-star-line', 'amber', false, acvBadge)}
             `;
         }
 
@@ -1060,16 +1086,13 @@
             const equalTarget = numPartners > 0 ? totalBusinessCapital / numPartners : 0;
             const plShare = numPartners > 0 ? (parseFloat(state.netProfit) || 0) / numPartners : 0;
 
-            const totalEqValueAll = partners.reduce((sum, p) => sum + partnersData[p].invested + plShare, 0);
-
             if (partners.length === 0) {
-                equityBody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-slate-400">No partner capital data available.</td></tr>';
+                equityBody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No partner capital data available.</td></tr>';
             } else {
                 partners.forEach(p => {
                     const invested = partnersData[p].invested;
                     const deficitSurplus = invested - equalTarget;
                     const equityVal = invested + plShare;
-                    const ownership = totalEqValueAll > 0 ? (equityVal / totalEqValueAll) * 100 : 0;
 
                     let defSurpHtml = `<span class="font-bold text-slate-600">₹${deficitSurplus.toFixed(2)}</span>`;
                     if (deficitSurplus > 0) defSurpHtml = `<span class="font-bold text-emerald-600">+₹${deficitSurplus.toFixed(2)}</span>`;
@@ -1087,7 +1110,6 @@
                             <td class="px-6 py-3 text-right">${defSurpHtml}</td>
                             <td class="px-6 py-3 text-right">${plHtml}</td>
                             <td class="px-6 py-3 text-right font-bold text-indigo-700 text-base">₹${equityVal.toFixed(2)}</td>
-                            <td class="px-6 py-3 text-right"><span class="bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded text-xs border border-slate-200">${ownership.toFixed(1)}%</span></td>
                         </tr>
                     `);
                 });
