@@ -522,7 +522,7 @@
                         <div class="overflow-x-auto scroller pb-2">
                             <table class="w-full text-left whitespace-nowrap">
                                 <thead
-                                    class="bg-indigo-50 border-b border-indigo-100 text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                                    class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase">
                                     <tr>
                                         <th class="px-6 py-3">Partner Name</th>
                                         <th class="px-6 py-3 text-right">Total Invested</th>
@@ -796,7 +796,7 @@
 
             // Unstyle ALL nav buttons (both desktop and mobile)
             document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('nav-active', 'text-indigo-600', 'bg-indigo-50');
+                el.classList.remove('nav-active', 'text-slate-900', 'font-bold');
                 el.classList.add('text-slate-500');
             });
 
@@ -808,11 +808,11 @@
             const activeMobileBtn = document.getElementById(`nav-mobile-${tabId}`);
 
             if (activeDesktopBtn) {
-                activeDesktopBtn.classList.add('nav-active', 'text-indigo-600', 'bg-indigo-50');
+                activeDesktopBtn.classList.add('nav-active', 'text-slate-900', 'font-bold');
                 activeDesktopBtn.classList.remove('text-slate-500');
             }
             if (activeMobileBtn) {
-                activeMobileBtn.classList.add('nav-active', 'text-indigo-600', 'bg-indigo-50');
+                activeMobileBtn.classList.add('nav-active', 'text-slate-900', 'font-bold');
                 activeMobileBtn.classList.remove('text-slate-500');
             }
 
@@ -1045,9 +1045,9 @@
             }
 
             stockArray.forEach(item => {
-                let statusHtml = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-bold">In Stock</span>';
-                if (item.count <= 5) statusHtml = '<span class="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-bold">Low</span>';
-                if (item.count <= 0) statusHtml = '<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded-full text-xs font-bold">Out</span>';
+                let statusHtml = '<span class="bg-white border border-slate-200 text-slate-700 px-2 py-0.5 rounded text-xs font-semibold">In Stock</span>';
+                if (item.count <= 5) statusHtml = '<span class="bg-white border border-slate-200 text-slate-700 px-2 py-0.5 rounded text-xs font-semibold">Low Stock</span>';
+                if (item.count <= 0) statusHtml = '<span class="bg-slate-50 border border-slate-200 text-slate-400 px-2 py-0.5 rounded text-xs font-semibold">Out</span>';
 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr>
@@ -1220,7 +1220,7 @@
             custArray.forEach(c => {
                 let badge = '<span class="text-slate-400 text-xs font-medium">Standard</span>';
                 if (c.orders > 2 || c.ltv > 5000) {
-                    badge = '<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-bold"><i class="ri-vip-crown-fill align-middle mr-1"></i>VIP</span>';
+                    badge = '<span class="bg-gray-900 text-white px-2 py-0.5 rounded text-xs font-semibold"><i class="ri-vip-crown-fill align-middle mr-1"></i> VIP</span>';
                 }
 
                 const copyData = JSON.stringify({ name: c.name, phone: c.phone, orders: c.orders, ltv: c.ltv.toFixed(2) }).replace(/"/g, '&quot;');
