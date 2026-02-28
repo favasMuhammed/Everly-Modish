@@ -992,21 +992,26 @@
 
             // 2. Render Grid
             const grid = document.getElementById('kpi-grid');
-            grid.innerHTML = `
-                ${createKpiCard('Total Revenue', totalRevenue, 'ri-wallet-3-line', 'indigo', false, gmBadge)}
-                ${createKpiCard('Net Profit', netProfit, 'ri-hand-coin-line', netProfit >= 0 ? 'emerald' : 'rose')}
-                ${createKpiCard('Total Capital', totalBusinessCapital, 'ri-bank-line', 'cyan', false, roiBadge)}
-                ${createKpiCard('Profit Margin', margin.toFixed(1) + '%', 'ri-percent-line', margin >= 20 ? 'emerald' : 'orange', true)}
-                
-                ${createKpiCard('Expenses', totalExpenses, 'ri-money-dollar-circle-line', 'rose', false, expBadge)}
-                ${createKpiCard('Inventory Capital', inventoryCapital, 'ri-safe-2-line', 'blue')}
-                ${createKpiCard('Potential Sales', potentialRevenue, 'ri-funds-line', 'violet')}
-                ${createKpiCard('Items Sold', itemsSold, 'ri-shopping-bag-3-line', 'slate', true, strBadge)}
-                ${createKpiCard('Avg Order Value', avgOrderValue, 'ri-user-star-line', 'amber', false, acvBadge)}
+            const totalBusinessCapitalStrict = isFinite(totalBusinessCapital) ? totalBusinessCapital : 0;
+
+            const contentHtml = `
+                ${createKpiCard('Global Net Profit', netProfit, 'ri-line-chart-line', 'text-indigo-600', 'bg-indigo-100', `₹${totalRevenue.toFixed(2)} Revenue`)}
+                ${createKpiCard('Total System Revenue', totalRevenue, 'ri-exchange-dollar-line', 'text-emerald-600', 'bg-emerald-100', `${itemsSold} Items Sold`)}
+                ${createKpiCard('System Avg Order Value', isFinite(avgOrderValue) ? avgOrderValue : 0, 'ri-shopping-bag-3-line', 'text-amber-600', 'bg-amber-100', `₹${isFinite(avgMargin) ? avgMargin.toFixed(2) : '0.00'} Avg Margin`)}
+                ${createKpiCard('Operating Expense Ratio', totalExpenses, 'ri-wallet-3-line', 'text-rose-600', 'bg-rose-100', `${isFinite(expenseRatio) ? expenseRatio.toFixed(1) : '0.0'}% of Revenue`, true)}
             `;
+
+            const capitalHtml = `
+                ${createKpiCard('Business Capital', totalBusinessCapitalStrict, 'ri-bank-line', 'text-blue-600', 'bg-blue-100', 'Active Equity')}
+                ${createKpiCard('Tied Inventory Capital', isFinite(inventoryCapital) ? inventoryCapital : 0, 'ri-box-3-line', 'text-orange-600', 'bg-orange-100', 'Sunk Cost')}
+                ${createKpiCard('Potential Retail Revenue', isFinite(potentialRevenue) ? potentialRevenue : 0, 'ri-money-dollar-circle-line', 'text-teal-600', 'bg-teal-100', 'Unrealized Value')}
+                ${createKpiCard('Master Valuation (Est)', totalBusinessCapitalStrict + (isFinite(inventoryCapital) ? inventoryCapital : 0) + netProfit, 'ri-vip-diamond-line', 'text-fuchsia-600', 'bg-fuchsia-100', 'Liquid + Assets')}
+            `;
+
+            grid.innerHTML = contentHtml + capitalHtml;
         }
 
-        function createKpiCard(title, value, icon, color, isText = false, subtextHtml = '') {
+        function createKpiCard(title, value, icon, color, bgColor, subtextHtml = '', isText = false) {
             const displayVal = isText ? value : `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
             return `
                 <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-slate-200 group hover:border-slate-300 transition-colors min-w-0">
@@ -1603,14 +1608,17 @@
             const equalTarget = numPartners > 0 ? totalBusinessCapital / numPartners : 0;
             const plShare = numPartners > 0 ? (parseFloat(state.netProfit) || 0) / numPartners : 0;
 
-            text += `*Global Overview*\n*Total Capital:* ₹${totalBusinessCapital.toFixed(2)}\n*Equal Target:* ₹${equalTarget.toFixed(2)}\n*Net Profit:* ₹${(plShare * numPartners).toFixed(2)}\n\n`;
+            const safeEqualTarget = isFinite(equalTarget) ? equalTarget : 0;
+            const safePlShare = isFinite(plShare) ? plShare : 0;
+
+            text += `*Global Overview*\n*Total Capital:* ₹${isFinite(totalBusinessCapital) ? totalBusinessCapital.toFixed(2) : '0.00'}\n*Equal Target:* ₹${safeEqualTarget.toFixed(2)}\n*Net Profit:* ₹${(safePlShare * numPartners).toFixed(2)}\n\n`;
             text += `*Partner Breakdown*\n`;
 
             partners.forEach(p => {
-                const invested = partnersData[p].invested;
-                const deficitSurplus = invested - equalTarget;
-                const equityVal = invested + plShare;
-                text += `👤 *${p}*\n*Invested:* ₹${invested.toFixed(2)}\n*Deficit/Surplus:* ${deficitSurplus > 0 ? '+' : ''}${deficitSurplus.toFixed(2)}\n*P&L Share:* ${plShare > 0 ? '+' : ''}${plShare.toFixed(2)}\n*Total Equity:* ₹${equityVal.toFixed(2)}\n\n`;
+                const invested = partnersData[p].invested || 0;
+                const deficitSurplus = invested - safeEqualTarget;
+                const equityVal = invested + safePlShare;
+                text += `👤 *${p}*\n*Invested:* ₹${isFinite(invested) ? invested.toFixed(2) : '0.00'}\n*Deficit/Surplus:* ${deficitSurplus > 0 ? '+' : ''}${isFinite(deficitSurplus) ? deficitSurplus.toFixed(2) : '0.00'}\n*P&L Share:* ${safePlShare > 0 ? '+' : ''}${safePlShare.toFixed(2)}\n*Total Equity:* ₹${isFinite(equityVal) ? equityVal.toFixed(2) : '0.00'}\n\n`;
             });
 
             navigator.clipboard.writeText(text).then(() => {
@@ -1849,13 +1857,22 @@
             const hiddenRow = document.getElementById(`row-${formId}`);
             if (hiddenRow) hiddenRow.value = ''; // Reset Form State
 
+            // Hard Reset Inputs specific to dynamic tracking
+            const skuInput = form.querySelector('input[name="SKU"]');
+            if (skuInput && formId === 'saleForm') skuInput.value = '';
+
             // Clean up custom dynamic UI states that form.reset() misses
             if (formId === 'capitalForm') {
                 const pSelect = document.getElementById('partnerSelect');
-                if (pSelect) handlePartnerSelect(pSelect);
+                if (pSelect) {
+                    pSelect.value = '';
+                    handlePartnerSelect(pSelect);
+                }
             } else if (formId === 'saleForm') {
                 const nameDisplay = document.getElementById('skuItemName');
                 if (nameDisplay) nameDisplay.innerText = '';
+                const totalInput = document.querySelector('#saleForm input[name="Total Paid"]');
+                if (totalInput) totalInput.value = ''; // Clear sticky total
             } else if (formId === 'invForm') {
                 const genSku = document.getElementById('genSku');
                 if (genSku) genSku.value = '';
@@ -1901,6 +1918,13 @@
                 })
                 .catch(err => {
                     showToast('Sync Error: ' + err.message + '. Refresh to rollback.', 'error');
+                })
+                .finally(() => {
+                    // Safety unlock if error forces catch
+                    if (btn.disabled) {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
                 });
         }
 
