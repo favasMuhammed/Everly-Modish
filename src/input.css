@@ -4,13 +4,13 @@
 
 @layer base {
     body {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 }
 
 @layer components {
     .nav-active {
-        @apply text-indigo-600 bg-indigo-50 font-semibold;
+        @apply text-slate-900 bg-white shadow-sm font-bold;
     }
 
     .glass-panel {

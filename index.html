@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Everly Modish | Master ERP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link href="dist/output.css" rel="stylesheet">
 </head>
@@ -14,7 +14,7 @@
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 duration-500">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm mx-4 transform transition-all">
+        <div class="bg-white p-8 rounded-lg shadow-sm w-full max-w-sm mx-4 transform transition-all">
             <div class="text-center mb-8">
                 <div
                     class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
@@ -27,11 +27,11 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div class="relative">
                     <input type="password" id="pinInput" placeholder="Enter PIN"
-                        class="w-full text-center text-2xl tracking-widest px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-0 outline-none transition-all placeholder:text-sm placeholder:tracking-normal"
+                        class="w-full text-center text-2xl tracking-widest px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-0 outline-none transition-all placeholder:text-sm placeholder:tracking-normal"
                         required autofocus>
                 </div>
                 <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-indigo-200 active:scale-[0.98]">
+                    class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3 rounded-lg transition-all shadow-sm shadow-slate-100 active:scale-[0.98]">
                     Unlock System
                 </button>
             </form>
@@ -58,7 +58,7 @@
                     </div>
 
                     <!-- Desktop Menu (Hidden on Mobile) -->
-                    <div class="hidden lg:flex space-x-1 bg-slate-100 p-1 rounded-xl">
+                    <div class="hidden lg:flex space-x-1 bg-slate-100 p-1 rounded-lg">
                         <button onclick="switchTab('dashboard')" id="nav-dashboard"
                             class="nav-item flex items-center px-4 py-2 rounded-lg transition-all font-semibold active:scale-[0.98]">
                             <i class="ri-dashboard-line mr-2 text-lg"></i> Dashboard
@@ -104,31 +104,31 @@
                 class="lg:hidden hidden absolute top-16 left-0 w-full bg-white shadow-xl border-b border-slate-100 z-50">
                 <div class="px-4 pt-2 pb-6 space-y-1">
                     <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold active:scale-[0.98]">
                         <i class="ri-dashboard-line mr-3 text-lg"></i> Dashboard
                     </button>
                     <button onclick="switchTab('sale')" id="nav-mobile-sale"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
                         <i class="ri-shopping-cart-2-line mr-3 text-lg"></i> New Sale
                     </button>
                     <button onclick="switchTab('inventory')" id="nav-mobile-inventory"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
                         <i class="ri-box-3-line mr-3 text-lg"></i> Inventory
                     </button>
                     <button onclick="switchTab('expense')" id="nav-mobile-expense"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
                         <i class="ri-bill-line mr-3 text-lg"></i> Expenses
                     </button>
                     <button onclick="switchTab('crm')" id="nav-mobile-crm"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
                         <i class="ri-group-line mr-3 text-lg"></i> CRM Directory
                     </button>
                     <button onclick="switchTab('capital')" id="nav-mobile-capital"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
                         <i class="ri-briefcase-4-line mr-3 text-lg"></i> Capital
                     </button>
                     <button onclick="switchTab('bank')" id="nav-mobile-bank"
-                        class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
+                        class="nav-item w-full flex items-center px-4 py-3 rounded-lg transition-all font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98]">
                         <i class="ri-safe-2-line mr-3 text-lg"></i> Bank / Cashflow
                     </button>
                 </div>
@@ -149,7 +149,7 @@
                     <!-- Dynamic Content -->
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
                         <h3 class="font-semibold text-slate-800">Live Inventory Status</h3>
                         <div class="flex items-center space-x-3">
@@ -188,14 +188,14 @@
                     <!-- POS Form -->
                     <div class="lg:col-span-1">
                         <div
-                            class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden sticky top-24">
-                            <div class="bg-slate-900 p-6 text-white pb-12">
-                                <h2 class="text-xl font-bold">New Sale</h2>
+                            class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden sticky top-24">
+                            <div class="p-6 pb-12 border-b border-slate-100">
+                                <h2 class="text-xl font-bold text-slate-800">New Sale</h2>
                                 <p class="text-slate-400 text-sm">Enter transaction details</p>
                             </div>
                             <div class="px-6 -mt-8">
                                 <form id="saleForm"
-                                    class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-4">
+                                    class="bg-white rounded-lg shadow-sm border border-slate-100 p-6 space-y-4">
                                     <input type="hidden" name="row" id="row-saleForm">
                                     <div class="space-y-1">
                                         <label class="text-xs font-semibold text-slate-500 uppercase">Customer</label>
@@ -262,7 +262,7 @@
                                     </div>
 
                                     <button type="button" onclick="submitData('saleForm', 'create_sale')"
-                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98] mt-4 flex justify-center items-center">
+                                        class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-lg shadow-sm shadow-slate-100 transition-all active:scale-[0.98] mt-4 flex justify-center items-center">
                                         <span id="btnText-saleForm">Complete Sale</span>
                                         <i class="ri-check-line ml-2 text-xl"></i>
                                     </button>
@@ -278,7 +278,7 @@
                     <div class="lg:col-span-2">
                         <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i
                                 class="ri-history-line mr-2"></i> Recent History</h2>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <div class="overflow-x-auto scroller pb-2">
                                 <table class="w-full text-left whitespace-nowrap">
                                     <thead
@@ -311,7 +311,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Add Product Form -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-24">
                             <h2 class="text-xl font-bold text-slate-800 mb-6" id="header-invForm">Add New Product</h2>
                             <form id="invForm" class="space-y-4">
                                 <input type="hidden" name="row" id="row-invForm">
@@ -357,7 +357,7 @@
                                         required>
                                 </div>
                                 <button type="button" onclick="submitData('invForm', 'create_inventory')"
-                                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+                                    class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-lg transition-all shadow-sm active:scale-[0.98]">
                                     <span id="btnText-invForm">Add to Catalog</span>
                                 </button>
                             </form>
@@ -371,7 +371,7 @@
                             <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium"
                                 id="totalSkuCount">0 SKUs</span>
                         </div>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <div class="overflow-x-auto scroller pb-2">
                                 <table class="w-full text-left whitespace-nowrap">
                                     <thead
@@ -402,7 +402,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Add Expense Form -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-24">
                             <h2 class="text-xl font-bold text-slate-800 mb-6" id="header-expForm">Log Expense</h2>
                             <form id="expForm" class="space-y-4">
                                 <input type="hidden" name="row" id="row-expForm">
@@ -433,7 +433,7 @@
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"></textarea>
                                 </div>
                                 <button type="button" onclick="submitData('expForm', 'create_expense')"
-                                    class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+                                    class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-lg transition-all shadow-sm active:scale-[0.98]">
                                     <span id="btnText-expForm">Log Expense</span>
                                 </button>
                             </form>
@@ -443,7 +443,7 @@
                     <!-- Expense History -->
                     <div class="lg:col-span-2">
                         <h2 class="text-lg font-bold text-slate-800 mb-4">Expense History</h2>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <div class="overflow-x-auto scroller pb-2">
                                 <table class="w-full text-left whitespace-nowrap">
                                     <thead
@@ -476,7 +476,7 @@
                     <span class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium"
                         id="crmTotalCustomers">0 Customers</span>
                 </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto scroller pb-2">
                         <table class="w-full text-left whitespace-nowrap">
                             <thead
@@ -518,7 +518,7 @@
                             <i class="ri-file-copy-line mr-1.5"></i> Copy Share Report
                         </button>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                         <div class="overflow-x-auto scroller pb-2">
                             <table class="w-full text-left whitespace-nowrap">
                                 <thead
@@ -546,7 +546,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Add Capital Form -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-24">
                             <h2 class="text-xl font-bold text-slate-800 mb-6" id="header-capitalForm">Log Transaction
                             </h2>
                             <form id="capitalForm" class="space-y-4">
@@ -582,7 +582,7 @@
                                         class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500"></textarea>
                                 </div>
                                 <button type="button" onclick="submitData('capitalForm', 'create_capital')"
-                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-[0.98]">
+                                    class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-lg transition-all shadow-sm active:scale-[0.98]">
                                     <span id="btnText-capitalForm">Record Transaction</span>
                                 </button>
                             </form>
@@ -592,7 +592,7 @@
                     <!-- Capital History -->
                     <div class="lg:col-span-2">
                         <h2 class="text-lg font-bold text-slate-800 mb-4">Capital Ledger History</h2>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <div class="overflow-x-auto scroller pb-2">
                                 <table class="w-full text-left whitespace-nowrap">
                                     <thead
@@ -631,7 +631,7 @@
                 <!-- Net Balance KPI -->
                 <div id="bank-kpi-container" class="mb-8">
                     <div
-                        class="bg-indigo-600 p-6 sm:p-8 rounded-2xl shadow-lg border border-indigo-700 text-white group min-w-0">
+                        class="bg-indigo-600 p-6 sm:p-8 rounded-lg shadow-sm border border-indigo-700 text-white group min-w-0">
                         <p class="text-indigo-200 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2">Total
                             Physical Cash in Hand</p>
                         <h3 id="bank-net-balance" class="text-3xl sm:text-4xl font-bold truncate">Loading...</h3>
@@ -658,7 +658,7 @@
                                 <i class="ri-add-circle-line mr-2"></i> Manual Transfer
                             </h2>
                             <form id="bankForm"
-                                class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 space-y-4">
+                                class="bg-white rounded-lg shadow-sm border border-slate-100 p-6 space-y-4">
                                 <input type="hidden" name="row" id="row-bankForm">
 
                                 <div class="space-y-1">
@@ -688,7 +688,7 @@
                                 </div>
 
                                 <button type="button" onclick="submitData('bankForm', 'create_bank')"
-                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98] mt-4 flex justify-center items-center">
+                                    class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-lg shadow-sm shadow-slate-100 transition-all active:scale-[0.98] mt-4 flex justify-center items-center">
                                     <span id="btnText-bankForm">Log Transfer</span>
                                     <i class="ri-save-line ml-2 text-xl"></i>
                                 </button>
@@ -701,7 +701,7 @@
                         <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
                             <div><i class="ri-list-check-3 mr-2"></i> Master Cashflow Ledger</div>
                         </h2>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <div class="overflow-x-auto scroller pb-2">
                                 <table class="w-full text-left whitespace-nowrap">
                                     <thead
@@ -1009,13 +1009,13 @@
         function createKpiCard(title, value, icon, color, isText = false, subtextHtml = '') {
             const displayVal = isText ? value : `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
             return `
-                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 group hover:border-${color}-200 transition-colors min-w-0">
+                <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-slate-200 group hover:border-slate-300 transition-colors min-w-0">
                     <div class="flex justify-between items-start mb-3 sm:mb-4">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-${color}-50 text-${color}-600 rounded-lg shrink-0"><i class="${icon} text-lg sm:text-xl leading-none"></i></div>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-slate-50 text-slate-700 border border-slate-100 rounded-lg shrink-0"><i class="${icon} text-lg sm:text-xl leading-none"></i></div>
                         ${subtextHtml}
                     </div>
                     <p class="text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate mb-1">${title}</p>
-                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800 truncate">${displayVal}</h3>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 truncate">${displayVal}</h3>
                 </div>
             `;
         }
@@ -1771,7 +1771,7 @@
                 iconHtml = '<i class="ri-loader-4-line animate-spin mr-2 text-xl"></i>';
             }
 
-            toast.className = `fixed bottom-6 right-6 z-50 transform transition-all duration-300 px-6 py-3 rounded-xl shadow-2xl flex items-center ${colorClass}`;
+            toast.className = `fixed bottom-6 right-6 z-50 transform transition-all duration-300 px-6 py-3 rounded-lg shadow-sm flex items-center ${colorClass}`;
             toast.innerHTML = `${iconHtml} <span class="font-medium">${msg}</span>`;
 
             // Clear existing timeout so notifications don't interrupt each other instantly
