@@ -1376,6 +1376,156 @@
             });
         }
 
+        function renderBank() {
+            let ledger = [];
+            let totalInflows = 0;
+            let totalOutflows = 0;
+
+            // Extract Sales (Inflow)
+            state.sales.forEach((row, i) => {
+                const amt = parseFloat(row[8]) || 0;
+                totalInflows += amt;
+                ledger.push({
+                    date: new Date(row[0]),
+                    origin: 'Sale Revenue',
+                    notes: `Customer: ${row[1] || 'Retail'} (SKU: ${row[4] || '-'})`,
+                    credit: amt,
+                    debit: 0,
+                    action: `<button onclick="switchTab('sale')" class="text-indigo-500 hover:bg-slate-50 p-1.5 rounded-md transition-colors" title="View in Sales"><i class="ri-external-link-line"></i></button>`
+                });
+            });
+
+            // Extract Capital (Mixed)
+            state.capital.forEach((row, i) => {
+                const type = row[2] || '';
+                const amt = parseFloat(row[3]) || 0;
+                const partner = row[1] || 'Partner';
+
+                if (type === 'Investment') {
+                    totalInflows += amt;
+                    ledger.push({
+                        date: new Date(row[0]),
+                        origin: 'Capital Investment',
+                        notes: `Deposit from ${partner}`,
+                        credit: amt,
+                        debit: 0,
+                        action: `<button onclick="switchTab('capital')" class="text-indigo-500 hover:bg-slate-50 p-1.5 rounded-md transition-colors" title="View in Capital"><i class="ri-external-link-line"></i></button>`
+                    });
+                } else if (type === 'Withdrawal') {
+                    totalOutflows += amt;
+                    ledger.push({
+                        date: new Date(row[0]),
+                        origin: 'Capital Withdrawal',
+                        notes: `Withdrawal by ${partner}`,
+                        credit: 0,
+                        debit: amt,
+                        action: `<button onclick="switchTab('capital')" class="text-indigo-500 hover:bg-slate-50 p-1.5 rounded-md transition-colors" title="View in Capital"><i class="ri-external-link-line"></i></button>`
+                    });
+                }
+            });
+
+            // Extract Expenses (Outflow)
+            state.expenses.forEach((row, i) => {
+                const amt = parseFloat(row[2]) || 0;
+                totalOutflows += amt;
+                ledger.push({
+                    date: new Date(row[0]),
+                    origin: `Expense: ${row[1] || 'Other'}`,
+                    notes: row[3] || '-',
+                    credit: 0,
+                    debit: amt,
+                    action: `<button onclick="switchTab('expense')" class="text-indigo-500 hover:bg-slate-50 p-1.5 rounded-md transition-colors" title="View in Expenses"><i class="ri-external-link-line"></i></button>`
+                });
+            });
+
+            // Extract Inventory Purchases (Outflow)
+            let totalInventoryCost = 0;
+            state.inventory.forEach(row => {
+                const cost = parseFloat(row[4]) || 0;
+                const initialStock = parseInt(row[6]) || 0;
+                totalInventoryCost += (cost * initialStock);
+            });
+            totalOutflows += totalInventoryCost;
+
+            // Extract Manual Bank Entries (Mixed)
+            state.bank.forEach((row, i) => {
+                const type = row[1] || '';
+                const amt = parseFloat(row[2]) || 0;
+                const notes = row[3] || '-';
+                const rowIndex = state.bank.length - i + 1;
+
+                if (type === 'Deposit') {
+                    totalInflows += amt;
+                    ledger.push({
+                        date: new Date(row[0]),
+                        origin: 'Manual Deposit',
+                        notes: notes,
+                        credit: amt,
+                        debit: 0,
+                        action: `
+                            <button onclick="editRecord('bank', ${rowIndex})" class="text-emerald-500 hover:bg-slate-50 p-1.5 rounded-md transition-colors cursor-pointer"><i class="ri-edit-2-line"></i></button>
+                            <button onclick="handleDelete('bank', ${rowIndex})" class="text-rose-400 hover:text-rose-600 hover:bg-slate-50 p-1.5 rounded-md transition-colors cursor-pointer"><i class="ri-delete-bin-line"></i></button>
+                        `
+                    });
+                } else if (type === 'Withdrawal') {
+                    totalOutflows += amt;
+                    ledger.push({
+                        date: new Date(row[0]),
+                        origin: 'Manual Withdrawal',
+                        notes: notes,
+                        credit: 0,
+                        debit: amt,
+                        action: `
+                            <button onclick="editRecord('bank', ${rowIndex})" class="text-emerald-500 hover:bg-slate-50 p-1.5 rounded-md transition-colors cursor-pointer"><i class="ri-edit-2-line"></i></button>
+                            <button onclick="handleDelete('bank', ${rowIndex})" class="text-rose-400 hover:text-rose-600 hover:bg-slate-50 p-1.5 rounded-md transition-colors cursor-pointer"><i class="ri-delete-bin-line"></i></button>
+                        `
+                    });
+                }
+            });
+
+            // Calculate Net Balance
+            const netBalance = totalInflows - totalOutflows;
+
+            // Update Header Metrics safely with || 0 fallbacks
+            const elNet = document.getElementById('bank-net-balance');
+            const elIn = document.getElementById('bank-total-inflows');
+            const elOut = document.getElementById('bank-total-outflows');
+
+            if (elNet) elNet.innerText = `₹${netBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            if (elIn) elIn.innerText = `₹${totalInflows.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            if (elOut) elOut.innerText = `₹${totalOutflows.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            // Sort timeline strictly descending by date
+            ledger.sort((a, b) => b.date - a.date);
+
+            // Render Hybrid Timeline
+            const tbody = document.getElementById('bankTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+                if (ledger.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No transactions recorded yet.</td></tr>';
+                    return;
+                }
+
+                ledger.slice(0, 50).forEach(entry => {
+                    const dateStr = !isNaN(entry.date) ? entry.date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+                    const debitHtml = entry.debit > 0 ? `<span class="font-bold text-slate-800">-₹${entry.debit.toFixed(2)}</span>` : '-';
+                    const creditHtml = entry.credit > 0 ? `<span class="font-bold text-slate-800">+₹${entry.credit.toFixed(2)}</span>` : '-';
+
+                    tbody.insertAdjacentHTML('beforeend', `
+                        <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <td class="px-6 py-3 text-slate-500 text-xs">${dateStr}</td>
+                            <td class="px-6 py-3 font-medium text-slate-700 bg-slate-50/50">${entry.origin}</td>
+                            <td class="px-6 py-3 text-slate-500 text-xs max-w-[200px] truncate" title="${entry.notes}">${entry.notes}</td>
+                            <td class="px-6 py-3 text-right bg-rose-50/20">${debitHtml}</td>
+                            <td class="px-6 py-3 text-right bg-emerald-50/20">${creditHtml}</td>
+                            <td class="px-6 py-3 text-center flex justify-center space-x-1">${entry.action}</td>
+                        </tr>
+                    `);
+                });
+            }
+        }
+
         // --- INTERACTION ---
         function handlePartnerSelect(selectElement) {
             const inputElement = document.getElementById('partnerInput');
@@ -1688,7 +1838,7 @@
                 renderCapital(); renderFinancials(); renderBank(); // Capital flows cash
             } else if (action.includes('bank')) { // NEW
                 const txDate = isEdit && arrIndex !== null ? state.bank[arrIndex][0] : nowTime;
-                optimisticRow = [txDate, formData.get('Type'), formData.get('Amount'), formData.get('Notes')];
+                optimisticRow = [txDate, formData.get('Transaction Type'), formData.get('Amount'), formData.get('Notes')];
                 if (isEdit && arrIndex !== null) state.bank[arrIndex] = optimisticRow;
                 else state.bank.push(optimisticRow);
                 renderBank(); // Triggers re-render for manual entries
@@ -1835,6 +1985,12 @@
                 fieldsObj = {
                     'Type': dataRow[2], 'Amount': dataRow[3], 'Notes': dataRow[4]
                 };
+            } else if (module === 'bank') { // NEW
+                dataRow = state.bank[arrIndex];
+                formId = 'bankForm';
+                fieldsObj = {
+                    'Transaction Type': dataRow[1], 'Amount': dataRow[2], 'Notes': dataRow[3]
+                };
             }
 
             if (!dataRow) return;
@@ -1867,7 +2023,7 @@
                 btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
 
                 // Override the onclick action explicitly
-                const mutationStr = `edit_${module === 'sales' ? 'sale' : module === 'expenses' ? 'expense' : module === 'inventory' ? 'inventory' : 'capital'}`;
+                const mutationStr = `edit_${module === 'sales' ? 'sale' : module === 'expenses' ? 'expense' : module === 'inventory' ? 'inventory' : module === 'bank' ? 'bank' : 'capital'}`;
                 btn.setAttribute('onclick', `submitData('${formId}', '${mutationStr}')`);
             }
 
