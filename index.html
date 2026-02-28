@@ -961,6 +961,9 @@
             const itemsSold = state.sales.reduce((acc, row) => acc + (parseInt(row[5]) || 0), 0);
             const avgOrderValue = state.sales.length > 0 ? totalRevenue / state.sales.length : 0;
 
+            // Fix: Establish standard avgMargin resolving the runtime Uncaught ReferenceError trace
+            const avgMargin = itemsSold > 0 ? (totalRevenue - totalCOGS) / itemsSold : 0;
+
             // Calculate Business Capital
             let totalBusinessCapital = 0;
             state.capital.forEach(row => {
@@ -1354,10 +1357,10 @@
                 const totalEquityValue = totalBusinessCapital + totalPlShare;
 
                 kpiGrid.innerHTML = `
-                    ${createKpiCard('Total Invested Capital', totalBusinessCapital, 'ri-bank-card-line', 'blue')}
-                    ${createKpiCard('Equal Target (Per Partner)', equalTarget, 'ri-scales-3-line', 'indigo')}
-                    ${createKpiCard('Global Net Profit', totalPlShare, 'ri-hand-coin-line', totalPlShare >= 0 ? 'emerald' : 'rose')}
-                    ${createKpiCard('Total Equity Value', totalEquityValue, 'ri-safe-2-line', 'violet')}
+                    ${createKpiCard('Total Invested Capital', totalBusinessCapital, 'ri-bank-card-line', 'text-blue-600', 'bg-blue-100')}
+                    ${createKpiCard('Equal Target (Per Partner)', equalTarget, 'ri-scales-3-line', 'text-indigo-600', 'bg-indigo-100')}
+                    ${createKpiCard('Global Net Profit', totalPlShare, 'ri-hand-coin-line', totalPlShare >= 0 ? 'text-emerald-600' : 'text-rose-600', totalPlShare >= 0 ? 'bg-emerald-100' : 'bg-rose-100')}
+                    ${createKpiCard('Total Equity Value', totalEquityValue, 'ri-safe-2-line', 'text-violet-600', 'bg-violet-100')}
                 `;
             }
 
@@ -1482,7 +1485,9 @@
                 const type = row[1] || '';
                 const amt = parseFloat(row[2]) || 0;
                 const notes = row[3] || '-';
-                const rowIndex = state.bank.length - i + 1;
+
+                // Fix: Prevent reversed Edit/Delete mappings by aligning loop forwards indexing securely mapped identically to Google Sheets (row + 2 headers shift)
+                const rowIndex = i + 2;
 
                 if (type === 'Deposit') {
                     totalInflows += amt;
